@@ -2,11 +2,7 @@ import cv2 as cv
 import os
 
 class ViolaJones:
-
     def __init__(self, cascade_type):
-        """
-        Viola-Jones constructor
-        """
         cwd = os.getcwd() # os.path.abspath()
         cascade_dir = cwd + "/darts/resources/cascades/"
         cascade_path = cascade_dir + cascade_type + "/cascade.xml"
@@ -27,7 +23,6 @@ class ViolaJones:
         boxes = self.__cascade_clf.detectMultiScale(frame_gray)
         return boxes
 
-
     def draw_box(self, name, boxes):
         """
         Draw boxes on frame
@@ -39,6 +34,7 @@ class ViolaJones:
         path = self.__out_dir + name + "_" + self.__cascade_type + ".png"
         cv.imwrite(path, frame)
 
+
 def load_check_frame(dir, name):
     """
     load frame from file name in directory
@@ -49,4 +45,3 @@ def load_check_frame(dir, name):
         print ("Error: image", name, "not found!")
         return False
     return frame
-        
