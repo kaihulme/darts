@@ -5,20 +5,18 @@ def faces(image_name, casade_name):
 
     # get test image and classifier directories
     dir = os.getcwd()
-    test_img_dir = dir + "/resources/images/test/"
-    opencv_dir   = dir + "/resources/opencv/"
-    out_dir      = dir + "/out/"
+    image_dir   = dir + "/darts/resources/images/test/"
+    cascade_dir = dir + "/darts/resources/cascades/"
+    out_dir     = dir + "/darts/out/"
 
     # get image and cascade paths
-    image_path   = test_img_dir + image_name + ".jpg"
-    cascade_path = opencv_dir + casade_name + ".xml"
-    out_path     = out_dir + image_name + "_faces.png"
-
-    print(out_path)
+    image_path   = image_dir + image_name + ".jpg"
+    cascade_path = cascade_dir + casade_name + ".xml"
+    out_path     = out_dir + image_name + "/" + casade_name + "/cascade.png"
 
     # get frame from image
     frame = cv.imread(image_path)
-    if (frame.all == None):
+    if (frame.any == None):
         print ("Error: image", image_name, "not found!")
         return False
 
@@ -53,6 +51,3 @@ def draw_faces(frame, faces, out_dir):
     
     # write image with bounding boxes
     cv.imwrite(out_dir, frame)
-
-# get faces in dart4 using frontalface classifier
-faces("dart4", "frontalface")
