@@ -1,2 +1,2 @@
-# viola-jones
-Implementations of Viola Jones, Hough Circles and Sobel edge detection in Python.
+# darts
+Face and object detection using OpenCV and Python.
