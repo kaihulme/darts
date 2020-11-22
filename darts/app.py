@@ -13,7 +13,7 @@ def run():
 
     frame = cv.imread(frame_path)
 
-    gaussian = Gaussian(3)
+    gaussian = Gaussian(7)
     frame = gaussian.blur(frame)
 
     cv.imwrite(out_path, frame)
