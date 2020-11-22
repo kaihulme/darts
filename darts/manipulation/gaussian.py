@@ -16,8 +16,7 @@ class Gaussian():
         """
         Apply gaussian kernel of specified size to (grey) frame
         """
-        frame_gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
-        frame_blur = convolution(frame_gray, self.kernel, self.r_i, self.r_j)
-        return frame_gray
+        frame = convolution(frame, self.kernel, self.r_i, self.r_j)
+        return frame
         # frame_gray = convolution(frame_gray, self.kX, self.r_i, self.r_j)
         # frame_gray = convolution(frame_gray, self.kY, self.r_i, self.r_j)

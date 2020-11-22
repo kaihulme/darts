@@ -6,32 +6,32 @@ class ViolaJones:
         cwd = os.getcwd() # os.path.abspath()
         cascade_dir = cwd + "/darts/resources/cascades/"
         cascade_path = cascade_dir + cascade_type + "/cascade.xml"
-        self.__cascade_type = cascade_type                
-        self.__cascade_clf = cv.CascadeClassifier()
-        self.__cascade_clf.load(cascade_path)
-        self.__frame_dir = cwd + "/darts/resources/images/test/"
-        self.__out_dir = cwd + "/darts/out/"
+        self._cascade_type = cascade_type                
+        self._cascade_clf = cv.CascadeClassifier()
+        self._cascade_clf.load(cascade_path)
+        self._frame_dir = cwd + "/darts/resources/images/test/"
+        self._out_dir = cwd + "/darts/out/"
 
     def find_bounding_boxes(self, name):
         """
         Find boxes in frame using cascafe
         """ 
-        frame = load_check_frame(self.__frame_dir, name)
+        frame = load_check_frame(self._frame_dir, name)
         if (frame.any == False) : return False
         frame_gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
         frame_gray = cv.equalizeHist(frame_gray, frame_gray)
-        boxes = self.__cascade_clf.detectMultiScale(frame_gray)
+        boxes = self._cascade_clf.detectMultiScale(frame_gray)
         return boxes
 
     def draw_box(self, name, boxes):
         """
         Draw boxes on frame
         """
-        frame = load_check_frame(self.__frame_dir, name)
+        frame = load_check_frame(self._frame_dir, name)
         if (frame.any == False) : return False
         for (x,y,w,h) in boxes:
             cv.rectangle(frame, (x,y), (x+w,y+h), (0,255,0), 2)
-        path = self.__out_dir + name + "_" + self.__cascade_type + ".png"
+        path = self._out_dir + name + "_" + self._cascade_type + ".png"
         cv.imwrite(path, frame)
 
 

@@ -1,16 +1,17 @@
-import numpy as np
 import cv2 as cv
+import numpy as np
 
-def convolution(frame, kernel, r_i, r_j, d=2):
+def convolution(frame, kernel, r_i, r_j):
     """
     apply convolution kernel to frame
     """
     rows, cols = frame.shape
     frame_copy = cv.copyMakeBorder(frame, r_j, r_j, r_i, r_i, cv.BORDER_REPLICATE)
-    for y in range(0,rows-1):
-        for x in range(0,cols-1):
-            frame[y][x] = convolve(frame_copy, kernel, x, y, r_i, r_j)
-    return frame_copy
+    out = np.zeros((rows,cols), dtype=float)
+    for y in range(rows-1):
+        for x in range(cols-1):
+            out[y][x] = convolve(frame_copy, kernel, x, y, r_i, r_j)    
+    return out
 
 
 def convolve(frame, kernel, i, j, r_i, r_j):
@@ -31,10 +32,10 @@ def correct_indices(i, j, m, n, r_i, r_j):
     """
     Correct frame and kernel indices for convolution
     """
-    if (r_i > 1): 
+    if (r_i > 0): 
         i += m + r_i
         m += r_i
-    if (r_j > 1):
+    if (r_j > 0):
         j += n + r_j
         n += r_j
     return i, j, m, n
