@@ -15,7 +15,7 @@ def threshold(frame, threshold):
             if (frame[y][x] > float(threshold)): frame_copy[y][x] = frame[y][x]
     return frame_copy
 
-# make same change as above
+# make similar change to above
 def threshold_abs(frame, threshold):
     """
     Set values in frame below threshold to 0 and above to 255.
@@ -41,14 +41,6 @@ def normalise(frame):
             else: frame[y][x] = 0
     return frame
 
-def normalisewrite(frame, name):
-    """
-    Normalise frame then write to /out with given name.
-    """
-    frame = normalise(frame)
-    path = getpath(name, "out")
-    cv.imwrite(path, frame)
-
 # np.rad2deg()
 def radtodeg(frame):
     """
@@ -62,12 +54,3 @@ def radtodeg(frame):
             deg = (rad if rad >= 0 else 2*pi + rad) * 360 / 2*pi
             frame[y][x] = deg
     return frame
-
-def getpath(name, loc):
-    """
-    Get file path given name and folder name.
-    """
-    dir = os.getcwd()
-    if (loc == "test") : return dir + "/darts/resources/images/test/" + name + ".png"
-    elif (loc == "out") : return dir + "/darts/out/" + name + ".png"
-    else: return False

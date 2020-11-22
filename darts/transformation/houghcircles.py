@@ -1,6 +1,7 @@
 import math
 import cv2 as cv
 import numpy as np
+from darts.manipulation.utils import threshold
 
 class HoughCircles():
     def __init__(self, min_r=10, max_r=100, r_step=1, t_step=1):
@@ -14,9 +15,10 @@ class HoughCircles():
         self.hough_space_sum = []
         self.t_hough_space_sum = []
 
+    # very slow needs improving!
     def transform(self, frame):
         """
-        Apply hough circles transformation to frame for a range of radii
+        Apply Hough circles transformation to frame for a range of radii
         """
         pi = math.pi
         rows, cols = frame.shape
@@ -30,8 +32,22 @@ class HoughCircles():
                     val = frame[y][x]
                     if (val > 0):
                         for theta in thetas:
-                            x0 = int(x - radius*theta[0])
-                            y0 = int(y - radius*theta[1])
-                            if (x0>=0 and y0>=0 and x0<cols and y0<rows):
+                            x0 = int(x - radius * theta[0])
+                            y0 = int(y - radius * theta[1])
+                            if (x0 >= 0 and y0 >= 0 and x0 < cols and y0 < rows):
                                 self.hough_space[r][y0][x0] += 1
             radius += self.r_step
+
+    def sum(self):
+        """
+        Sum hough space circles into one summed Hough space.
+        """
+        self.hough_space_sum = np.sum(self.hough_space, axis=0)
+
+    def thresholdspaces(self, threshold_val):
+        """
+        Threshold each hough space, as well as the sum of Hough spaces.
+        """
+        for r, space in enumerate(self.hough_space):
+            self.hough_space[r] = threshold(space, threshold_val)
+        self.t_hough_space_sum = threshold(self.hough_space_sum, threshold_val)
