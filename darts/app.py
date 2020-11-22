@@ -1,6 +1,7 @@
 import cv2 as cv
 from darts.manipulation.gaussian import Gaussian
 from darts.detection.edgedetector import Sobel
+from darts.transformation.houghcircles import HoughCircles
 from darts.detection.violajones import ViolaJones
 from darts.manipulation.utils import normalisewrite, getpath, radtodeg
 
@@ -15,8 +16,9 @@ def run():
 
     # gaussain blur
     print("\nApplying Gausian blur...")
-    gaussian = Gaussian(size=15)
-    frame = gaussian.blur(frame)
+    # gaussian = Gaussian(size=15)
+    # frame = gaussian.blur(frame)
+    frame = cv.GaussianBlur(frame, (15,15), 0) # faster
     normalisewrite(frame, test_name+"_gaussian")
 
     # sobel edge detection
@@ -28,6 +30,18 @@ def run():
     normalisewrite(sobel.magnitude, test_name+"_magnitude")
     normalisewrite(radtodeg(sobel.direction), test_name+"_direction")
     normalisewrite(sobel.t_magnitude, test_name+"_threshold_magnitude")
+
+    # hough circles
+    print("\nApplying hough circles transformation")
+    houghcircles = HoughCircles(30, 50, 5, 20)
+    houghcircles.transform(sobel.t_magnitude)
+
+    print(houghcircles.hough_space.shape)
+
+    s = 0
+    for space in houghcircles.hough_space:
+        normalisewrite(space, test_name+"_houghspace_" + str(s))
+        s += 1
 
     # # get test images
     # dir = os.getcwd()

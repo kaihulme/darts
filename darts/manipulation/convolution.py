@@ -1,6 +1,8 @@
 import cv2 as cv
 import numpy as np
 
+# MAKE CLASS TO STOP PASSING FRAME TO CONVOLE EACH TIME
+# OR JUST PASS CONVOLUTION REGION
 def convolution(frame, kernel, r_i, r_j):
     """
     apply convolution kernel to frame

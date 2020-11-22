@@ -3,6 +3,7 @@ import math
 import cv2 as cv
 import numpy as np
 
+# faster with numpy: result=(frame>threshold)*frame, or frame[frame<threshold]=0
 def threshold(frame, threshold):
     """
     Set values in frame below threshold to 0.
@@ -14,9 +15,10 @@ def threshold(frame, threshold):
             if (frame[y][x] > float(threshold)): frame_copy[y][x] = frame[y][x]
     return frame_copy
 
+# make same change as above
 def threshold_abs(frame, threshold):
     """
-    Set values in frame below threshold to 0.
+    Set values in frame below threshold to 0 and above to 255.
     """
     rows, cols = frame.shape
     frame_copy = np.zeros((rows, cols), dtype=float)
@@ -25,6 +27,7 @@ def threshold_abs(frame, threshold):
             if (frame[y][x] > float(threshold)): frame_copy[y][x] = 255
     return frame_copy
 
+# sklearn.preprocessing.normalise()
 def normalise(frame):
     """
     MinMax normalisation of frame between 0-255
@@ -46,6 +49,7 @@ def normalisewrite(frame, name):
     path = getpath(name, "out")
     cv.imwrite(path, frame)
 
+# np.rad2deg()
 def radtodeg(frame):
     """
     Convert a matrix of radian angles to degrees.
