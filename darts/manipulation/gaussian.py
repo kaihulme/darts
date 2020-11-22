@@ -3,20 +3,16 @@ from darts.manipulation.convolution import convolution
 
 class Gaussian():
     def __init__(self, size):
-        self.kernel = cv.getGaussianKernel(size, -1)
-        self.r_i = 0
-        self.r_j = int((size-1)/2)
-        # self.kX = cv.getGaussianKernel(size, -1)
-        # self.kY = cv.getGaussianKernel(size, -1)
+        self.kX = cv.getGaussianKernel(size, -1)
+        self.kY = cv.transpose(self.kX)
         # self.kernel = self.kX * cv.transpose(self.kY)
-        # self.r_i = int((size - 1) / 2)
-        # self.r_j = int((size - 1) / 2)
+        self.r = int((size - 1) / 2)
 
     def blur(self, frame):
         """
-        Apply gaussian kernel of specified size to (grey) frame
+        Apply gaussian kernel of specified size to (grey) frame.
         """
-        frame = convolution(frame, self.kernel, self.r_i, self.r_j)
+        frame = convolution(frame, self.kX, 0, self.r)
+        frame = convolution(frame, self.kY, self.r, 0)
+        # frame = convolution(frame, self.kernel, self.r, self.r)
         return frame
-        # frame_gray = convolution(frame_gray, self.kX, self.r_i, self.r_j)
-        # frame_gray = convolution(frame_gray, self.kY, self.r_i, self.r_j)

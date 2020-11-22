@@ -1,6 +1,8 @@
+import math
 import cv2 as cv
 import numpy as np
 from darts.manipulation.convolution import convolution, convolve
+from darts.manipulation.utils import threshold
 
 class Sobel():
     def __init__(self):
@@ -18,19 +20,22 @@ class Sobel():
                              [ 0, 0, 0],
                              [ 1, 1, 1]]
 
-    def edgedetection(self, frame):
+    def edgedetection(self, frame, threshold_val):
         """
         Apply sobel edge detection to frame
         """
+        rows, cols = frame.shape        
         self.dfdx = convolution(frame, self._dfdx_kernel, self._r_i, self._r_j)
         self.dfdy = convolution(frame, self._dfdy_kernel, self._r_i, self._r_j)
-        
-        # for y in range(rows-1):
-        #     for x in range(cols-1):
-        #         self.dfdx[y][x] = convolve(frame_copy, self._dfdx_kernel, x, y, self._r_i, self._r_j)
-        #         self.dfdy[y][x] = convolve(frame_copy, self._dfdy_kernel, x, y, self._r_i, self._r_j)
-
-    # def thresholdmagnitude(self, frame, threshold):
-        # """
-        # Threshold the gradient magnitudes produced sobel
-        # """
+        self.magnitude = np.zeros((rows, cols), dtype=float)
+        self.direction = np.zeros((rows, cols), dtype=float)
+        # magnitude: ∇|f(x,y)| = sqrt( (df/dx)^2 + (df/dy)^2 )
+	    # direction: φ = arctan( (df/dy) / (df/dx) )
+        for y in range(rows):
+            for x in range(cols):
+                dfdx_val = self.dfdx[y][x]
+                dfdy_val = self.dfdy[y][x]
+                self.magnitude[y][x] = math.sqrt((dfdx_val**2) + (dfdy_val**2))
+                self.direction[y][x] = math.atan2(dfdy_val, dfdx_val)
+                # if(self.magnitude[y][x] > 0) : print(self.magnitude[y][x])
+        self.t_magnitude = threshold(self.magnitude, threshold_val)

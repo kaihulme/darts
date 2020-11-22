@@ -2,29 +2,32 @@ import cv2 as cv
 from darts.manipulation.gaussian import Gaussian
 from darts.detection.edgedetector import Sobel
 from darts.detection.violajones import ViolaJones
-from darts.manipulation.utils import normalisewrite, getpath
+from darts.manipulation.utils import normalisewrite, getpath, radtodeg
 
 def run():
+    """
+    Main application...
+    """
     # get grey frame
     test_name = "coins1"
     frame = cv.imread(getpath(test_name, "test"))
     frame = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
 
     # gaussain blur
-    gaussian = Gaussian(5)
+    print("\nApplying Gausian blur...")
+    gaussian = Gaussian(size=15)
     frame = gaussian.blur(frame)
-
-    normalisewrite(frame, test_name+" gaussian")
-    # cv.imwrite(getpath("gaussian", "out"), frame)
+    normalisewrite(frame, test_name+"_gaussian")
 
     # sobel edge detection
+    print("\nDetecting edges...")
     sobel = Sobel()
-    sobel.edgedetection(frame)
-
-    normalisewrite(sobel.dfdx, test_name+" dfdx")
-    normalisewrite(sobel.dfdy, test_name+" dfdy")
-    # cv.imwrite(getpath(test_name+" dfdx", "out"), sobel.dfdx)
-    # cv.imwrite(getpath(test_name+" dfdy", "out"), sobel.dfdy)
+    sobel.edgedetection(frame, threshold_val=60)
+    normalisewrite(sobel.dfdx, test_name+"_dfdx")
+    normalisewrite(sobel.dfdy, test_name+"_dfdy")
+    normalisewrite(sobel.magnitude, test_name+"_magnitude")
+    normalisewrite(radtodeg(sobel.direction), test_name+"_direction")
+    normalisewrite(sobel.t_magnitude, test_name+"_threshold_magnitude")
 
     # # get test images
     # dir = os.getcwd()
@@ -41,4 +44,6 @@ def run():
     # dartboard_clf = ViolaJones("dartboard")
     # for name in test_names:    
         # dartboard_boxes = dartboard_clf.find_bounding_boxes(name)
-        # dartboard_clf.draw_box(name, dartboard_boxes)
+        # dartboard_clf.draw_box(name, dartboard_boxes) 
+
+    print("\nComplete!\n")

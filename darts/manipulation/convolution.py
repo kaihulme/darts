@@ -7,12 +7,11 @@ def convolution(frame, kernel, r_i, r_j):
     """
     rows, cols = frame.shape
     frame_copy = cv.copyMakeBorder(frame, r_j, r_j, r_i, r_i, cv.BORDER_REPLICATE)
-    out = np.zeros((rows,cols), dtype=float)
-    for y in range(rows-1):
-        for x in range(cols-1):
+    out = np.zeros((rows, cols), dtype=float)
+    for y in range(rows):
+        for x in range(cols):
             out[y][x] = convolve(frame_copy, kernel, x, y, r_i, r_j)    
     return out
-
 
 def convolve(frame, kernel, i, j, r_i, r_j):
     """
@@ -26,7 +25,6 @@ def convolve(frame, kernel, i, j, r_i, r_j):
             kernel_val = kernel[k_y][k_x]
             sum += frame_val * kernel_val
     return sum
-
 
 def correct_indices(i, j, m, n, r_i, r_j):
     """
