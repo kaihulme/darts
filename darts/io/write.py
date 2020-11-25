@@ -24,14 +24,14 @@ def sobel(sobel, name):
     write(sobel.dfdy, name + "_dfdy")
     write(sobel.magnitude, name + "_magnitude")
     write(radtodeg(sobel.direction), name + "_direction")
-    write(sobel.t_magnitude, name + "_threshold_magnitude")
+    write(sobel.t_magnitude, name + "_magnitude_threshold")
 
 def houghlines(houghlines, name):
     """
     Write hough lines to file. 
     """
-    write(houghlines.hough_space, name + "_houghspace_lines")
-    write(houghlines.t_hough_space, name + "_thresholded_houghspace_lines")
+    write(houghlines.hough_space, name + "_houghlines")
+    write(houghlines.t_hough_space, name + "_houghlines_threshold")
 
 def houghcircles(houghcircles, name, all=False):
     """
@@ -39,7 +39,7 @@ def houghcircles(houghcircles, name, all=False):
     """
     if (all):
         for s, (space, t_space) in enumerate(zip(houghcircles.hough_space, houghcircles.t_hough_space)):
-            write(space, name + "_houghspace_" + str((s + 1) * houghcircles.r_size))
-            write(t_space, name + "_tresholded_houghspace_" + str((s + 1) * houghcircles.r_size))
-    write(houghcircles.hough_space_sum, name + "_houghspace_summed")
-    write(houghcircles.t_hough_space_sum, name + "_thresholded_houghspace_summed")
+            write(space, name + "_houghcircles_" + str((s + 1) * houghcircles.r_size))
+            write(t_space, name + "_houghcircles_" + str((s + 1) * houghcircles.r_size) + "_threshold")
+    write(houghcircles.hough_space_sum, name + "_houghcircles_sum")
+    write(houghcircles.t_hough_space_sum, name + "_houghcircles_sum_threshold")

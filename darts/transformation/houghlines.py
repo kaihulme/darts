@@ -10,25 +10,40 @@ class HoughLines():
         self.hough_space = []
         self.t_hough_space = []
 
-    # very slow needs improving!
     def transform(self, frame):
         """
         Apply Hough circles transformation to frame for a range of radii
         """
+        # create hough space
         rows, cols = frame.shape
-        thetas = [theta for theta in range (0, 360, self.t_step)]
+        max_rho = int(math.hypot(rows, cols))
+        max_theta = 180
+        self.hough_space = np.zeros((max_rho*2, max_theta*2))
 
-        self.hough_space = np.zeros((rows, cols))
-        points = np.nonzero(frame)
+        # precompute sin(theta), cos(theta) for all theta
+        thetas = np.arange(-max_theta, max_theta+1, self.t_step)
+        cossin = np.column_stack((np.sin(thetas * math.pi / 180), 
+                                  np.cos(thetas * math.pi / 180)))
 
-        # for r in range(self.r_size):
-        for (y, x) in zip(points[0], points[1]):
-            x0s = np.array(x * np.cos(thetas)).astype('int')
-            y0s = np.array(y * np.sin(thetas)).astype('int')
-            rhos = x0s + y0s
-            for (rho, theta) in zip(rhos, thetas):
-                if (rho >= 0 and theta >= 0 and rho < cols and theta < rows):
-                    self.hough_space[theta][rho] += 1
+        # get positions of non-zero magnitude pixels and set inital radius
+        points = np.column_stack(np.nonzero(frame))
+
+        for (y, x) in points:
+
+            # caluclate rho = ysin(theta) + xcos(theta)
+            rhos = y * cossin[:, 0] + x * cossin[:, 1]
+
+            # set line points as (rho, theta) and remove points not in space size
+            l_points = np.column_stack((rhos, thetas)).astype('int')
+            l_points = l_points[np.where((l_points[:, 0] >= -max_rho) 
+                                        & (l_points[:, 1] >= -max_theta) 
+                                        & (l_points[:, 0] < max_rho) 
+                                        & (l_points[:, 1] < max_theta))]
+
+            for (rho, theta) in l_points:
+                self.hough_space[rho+max_rho][theta+max_theta] += 1
+                # print(f"(theta, rho): ({theta}, {rho})")
+                # if (theta >= 0 and rho >= 0 and theta < rows and rho < cols):
 
     def threshold(self, threshold_val):
         """

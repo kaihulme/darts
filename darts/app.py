@@ -11,12 +11,12 @@ def run():
     """
     Main application...
     """
-    name = "coins1"
+    name = "rectangle"
     frame = read(name, "test", ".png")
     frame = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
 
     # gaussain blur
-    print("\nApplying Gausian blur...")
+    print("\nApplying gausian blur...")
     # gaussian = Gaussian(size=15)
     # frame = gaussian.blur(frame)
     frame = cv.GaussianBlur(frame, (15,15), 0) # faster
@@ -29,19 +29,19 @@ def run():
     write.sobel(sobel, name)
 
     # hough lines
-    print("\nApplying hough lines transformation")
+    print("\nApplying Hough lines transformation...")
     houghlines = HoughLines()
     houghlines.transform(sobel.t_magnitude)
     houghlines.threshold(threshold_val=10)
     write.houghlines(houghlines, name)
 
     # hough circles
-    print("\nApplying hough circles transformation")
+    print("\nApplying Hough circles transformation...")
     houghcircles = HoughCircles(35, 50, 1, 20)
     houghcircles.transform(sobel.t_magnitude)
     houghcircles.sum()
     houghcircles.threshold(threshold_val=70)
-    write.houghcircles(houghcircles, name, True)
+    write.houghcircles(houghcircles, name, all=False)
 
     # # get test images
     # dir = os.getcwd()
