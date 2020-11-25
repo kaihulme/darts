@@ -36,7 +36,7 @@ class HoughLines():
                                         & (l_points[:, 0] < max_rho) 
                                         & (l_points[:, 1] < max_theta))]
             # shift line points to centre polar origin and increment each in hough space
-            np.add.at(self.hough_space, (l_points[:, 0] + max_rho, l_points[:, 1] + max_theta, 1))
+            np.add.at(self.hough_space, (l_points[:, 0] + max_rho, l_points[:, 1] + max_theta), 1)
 
     def threshold(self, threshold_val):
         """
