@@ -34,6 +34,11 @@ class HoughLines():
             rhos = y * cossin[dt[0]:dt[1], 0] + x * cossin[dt[0]:dt[1], 1]
             # set line points as each pair (ρ, θ) where θ is in Δ0 and remove points not in space size
             l_points = np.column_stack((rhos, thetas[dt[0]:dt[1]])).astype('int')
+
+            print(rhos.size)
+            print(thetas.size)
+            print(l_points.size)
+
             l_points = l_points[np.where((l_points[:, 0] >= -max_rho) 
                                         & (l_points[:, 1] >= -max_theta) 
                                         & (l_points[:, 0] < max_rho) 

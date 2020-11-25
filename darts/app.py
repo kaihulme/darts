@@ -44,6 +44,12 @@ def run():
     houghcircles.threshold(threshold_val=70)
     write.houghcircles(houghcircles, name, all=False)
 
+    # when finding local maxima:
+    #   find loc of max
+    #   add loc of max to set
+    #   for each next max:
+    #       check dist 
+
     # # get test images
     # dir = os.getcwd()
     # test_dir = dir + "/darts/resources/images/test"    
