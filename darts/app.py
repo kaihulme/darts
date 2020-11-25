@@ -11,16 +11,15 @@ def run():
     """
     Main application...
     """
-    name = "rectangle"
+    name = "coins1"
     frame = read(name, "test", ".png")
     frame = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
     write.write(frame, name + "_gray")
 
     # gaussain blur
     print("\nApplying gausian blur...")
-    # gaussian = Gaussian(size=15)
-    # frame = gaussian.blur(frame)
-    frame = cv.GaussianBlur(frame, (15, 15), 0) # faster
+    gaussian = Gaussian(size=15)
+    frame = gaussian.blur(frame)
     write.gaussian(frame, name)
 
     # sobel edge detection
@@ -43,12 +42,6 @@ def run():
     houghcircles.sum()
     houghcircles.threshold(threshold_val=70)
     write.houghcircles(houghcircles, name, all=False)
-
-    # when finding local maxima:
-    #   find loc of max
-    #   add loc of max to set
-    #   for each next max:
-    #       check dist 
 
     # # get test images
     # dir = os.getcwd()

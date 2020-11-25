@@ -27,20 +27,11 @@ def normalise(frame):
     """
     MinMax normalisation of frame between 0-255
     """
-    # MIGHT NOT BE WORKING
     frame_copy = np.copy(frame)
     min = np.min(frame_copy)
     max = np.max(frame_copy)
     frame_copy = (frame - min) / (max - min) * 255
     return frame_copy
-    # min, max, _, _ = cv.minMaxLoc(frame)
-    # rows, cols = frame.shape
-    # for y in range(rows):
-        # for x in range(cols):
-            # val = frame[y][x]
-            # if (max-min > 0): frame[y][x] = 255 * (val-min)/(max-min)
-            # else: frame[y][x] = 0
-    # return frame
 
 # np.rad2deg() is faster
 def radtodeg(frame):

@@ -24,7 +24,7 @@ def sobel(sobel, name):
     write(sobel.dfdx, name + "_dfdx")
     write(sobel.dfdy, name + "_dfdy")
     write(sobel.magnitude, name + "_magnitude")
-    write(radtodeg(sobel.direction), name + "_direction")
+    write(np.rad2deg(sobel.direction), name + "_direction")
     write(sobel.t_magnitude, name + "_magnitude_threshold")
 
 def houghlines(houghlines, name):
