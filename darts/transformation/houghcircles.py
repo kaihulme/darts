@@ -1,3 +1,4 @@
+from darts.io.write import houghcircles
 import math
 import cv2 as cv
 import numpy as np
@@ -20,22 +21,24 @@ class HoughCircles():
         """
         Apply Hough circles transformation to frame for a range of radii
         """
-        pi = math.pi
+        # create houghspace
         rows, cols = frame.shape
-        radius = self.min_r
         self.hough_space = np.zeros((self.r_size, rows, cols))
-        thetas = [(math.cos(theta*pi/180), math.sin(theta*pi/180)) for theta in range(0, 360, self.t_step)]        
+        # precompute sin/cos thetas
+        thetas = np.arange(0, 360, self.t_step) * math.pi / 180
+        cossin = np.column_stack((np.sin(thetas), np.cos(thetas)))
+        # get positions of non zero magnitude and set initial radius
+        points = np.column_stack(np.nonzero(frame))
+        radius = self.min_r
         for r in range(self.r_size):
-            self.hough_space[r] = np.zeros((rows, cols))
-            for y in range(rows):
-                for x in range(cols):
-                    val = frame[y][x]
-                    if (val > 0):
-                        for theta in thetas:
-                            x0 = int(x - radius * theta[0])
-                            y0 = int(y - radius * theta[1])
-                            if (x0 >= 0 and y0 >= 0 and x0 < cols and y0 < rows):
-                                self.hough_space[r][y0][x0] += 1
+            for (y, x) in points:
+                # compute circle points
+                c_points = np.column_stack((y - cossin[:, 1] * radius, x - cossin[:, 0] * radius)).astype('int')
+                # remove points not in space
+                c_points = c_points[np.where(~(c_points < 0).any(1) & (c_points[:, 0] < rows) & (c_points[:,1] < cols))]
+                # increment points
+                np.add.at(self.hough_space[r], (c_points[:, 0], c_points[:, 1]), 1)
+            # increment radius
             radius += self.r_step
 
     def sum(self):
@@ -44,7 +47,7 @@ class HoughCircles():
         """
         self.hough_space_sum = np.sum(self.hough_space, axis=0)
 
-    def thresholdspaces(self, threshold_val):
+    def threshold(self, threshold_val):
         """
         Threshold each hough space, as well as the sum of Hough spaces.
         """

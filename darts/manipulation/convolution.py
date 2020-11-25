@@ -1,8 +1,44 @@
 import cv2 as cv
 import numpy as np
 
-# MAKE CLASS TO STOP PASSING FRAME TO CONVOLE EACH TIME
-# OR JUST PASS CONVOLUTION REGION
+class Convolution():
+    def __init__(self, frame, kernel, r_i, r_j):
+        """
+        Convolution class for faster convolutions
+        """
+        rows, cols = frame.shape
+        self.frame = cv.copyMakeBorder(frame, r_j, r_j, r_i, r_i, cv.BORDER_REPLICATE)
+        self.rows = rows
+        self.cols = cols
+        self.kernel = kernel
+        self.r_i = r_i
+        self.r_j = r_j        
+
+    def convolveframe(self):
+        """
+        apply convolution kernel to frame
+        """
+        # rows, cols = self.frame.shape
+        # frame_copy = cv.copyMakeBorder(self.frame, self.r_j, self.r_j, self.r_i, self.r_i, cv.BORDER_REPLICATE)
+        result = np.zeros((self.rows, self.cols), dtype=float)
+        for y in range(self.rows):
+            for x in range(self.cols):
+                result[y][x] = self.convolve(x, y)
+        return result
+
+    def convolve(self, i, j):
+        """
+        convolve (i,j) in frame with kernel
+        """
+        sum = 0.0
+        for m in range(-self.r_i, self.r_i+1):
+            for n in range(-self.r_j, self.r_j+1):
+                x, y, k_x, k_y = correct_indices(i, j, m, n, self.r_i, self.r_j)
+                frame_val = self.frame[y][x]
+                kernel_val = self.kernel[k_y][k_x]
+                sum += frame_val * kernel_val
+        return sum
+
 def convolution(frame, kernel, r_i, r_j):
     """
     apply convolution kernel to frame

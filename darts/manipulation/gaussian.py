@@ -1,5 +1,5 @@
 import cv2 as cv
-from darts.manipulation.convolution import convolution
+from darts.manipulation.convolution import Convolution
 
 class Gaussian():
     def __init__(self, size):
@@ -12,7 +12,6 @@ class Gaussian():
         """
         Apply gaussian kernel of specified size to (grey) frame.
         """
-        frame = convolution(frame, self.kX, 0, self.r)
-        frame = convolution(frame, self.kY, self.r, 0)
-        # frame = convolution(frame, self.kernel, self.r, self.r)
+        frame = Convolution(frame, self.kX, 0, self.r).convolveframe()
+        frame = Convolution(frame, self.kY, self.r, 0).convolveframe()
         return frame

@@ -2,6 +2,7 @@ import cv2 as cv
 import darts.io.write as write
 from darts.io.read import read
 from darts.manipulation.gaussian import Gaussian
+from darts.transformation.houghlines import HoughLines
 from darts.transformation.houghcircles import HoughCircles
 from darts.detection.edgedetector import Sobel
 from darts.detection.violajones import ViolaJones
@@ -10,9 +11,8 @@ def run():
     """
     Main application...
     """
-    # get grey frame
-    name = "dart0"
-    frame = read(name, "test")
+    name = "coins1"
+    frame = read(name, "test", ".png")
     frame = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
 
     # gaussain blur
@@ -28,12 +28,19 @@ def run():
     sobel.edgedetection(frame, threshold_val=60)
     write.sobel(sobel, name)
 
+    # hough lines
+    print("\nApplying hough lines transformation")
+    houghlines = HoughLines()
+    houghlines.transform(sobel.t_magnitude)
+    houghlines.threshold(threshold_val=10)
+    write.houghlines(houghlines, name)
+
     # hough circles
     print("\nApplying hough circles transformation")
     houghcircles = HoughCircles(35, 50, 1, 20)
     houghcircles.transform(sobel.t_magnitude)
     houghcircles.sum()
-    houghcircles.thresholdspaces(threshold_val=50)
+    houghcircles.threshold(threshold_val=70)
     write.houghcircles(houghcircles, name, True)
 
     # # get test images

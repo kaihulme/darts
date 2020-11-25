@@ -26,6 +26,13 @@ def sobel(sobel, name):
     write(radtodeg(sobel.direction), name + "_direction")
     write(sobel.t_magnitude, name + "_threshold_magnitude")
 
+def houghlines(houghlines, name):
+    """
+    Write hough lines to file. 
+    """
+    write(houghlines.hough_space, name + "_houghspace_lines")
+    write(houghlines.t_hough_space, name + "_thresholded_houghspace_lines")
+
 def houghcircles(houghcircles, name, all=False):
     """
     Write hough spaces to file. 

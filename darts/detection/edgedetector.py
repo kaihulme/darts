@@ -1,8 +1,10 @@
 import math
 import cv2 as cv
 import numpy as np
-from darts.manipulation.convolution import convolution, convolve
+from darts.manipulation.convolution import Convolution, convolution
 from darts.manipulation.utils import threshold
+
+from scipy.signal import convolve2d
 
 class Sobel():
     def __init__(self):
@@ -25,8 +27,12 @@ class Sobel():
         Apply sobel edge detection to frame
         """
         rows, cols = frame.shape        
-        self.dfdx = convolution(frame, self._dfdx_kernel, self._r_i, self._r_j)
-        self.dfdy = convolution(frame, self._dfdy_kernel, self._r_i, self._r_j)
+        self.dfdx = convolve2d(frame, self._dfdx_kernel, boundary='symm', mode='same') # faster than my implementation
+        self.dfdy = convolve2d(frame, self._dfdy_kernel, boundary='symm', mode='same')
+        # self.dfdx = Convolution(frame, self._dfdx_kernel, self._r_i, self._r_j).convolveframe()
+        # self.dfdy = Convolution(frame, self._dfdy_kernel, self._r_i, self._r_j).convolveframe()
+        # self.dfdx = convolution(frame, self._dfdx_kernel, self._r_i, self._r_j)
+        # self.dfdy = convolution(frame, self._dfdy_kernel, self._r_i, self._r_j)
         self.magnitude = np.zeros((rows, cols), dtype=float)
         self.direction = np.zeros((rows, cols), dtype=float)
         # magnitude: ∇|f(x,y)| = sqrt( (df/dx)^2 + (df/dy)^2 )
