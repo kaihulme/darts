@@ -16,27 +16,26 @@ class HoughCircles():
         self.hough_space_sum = []
         self.t_hough_space_sum = []
 
-    # very slow needs improving!
     def transform(self, frame):
         """
         Apply Hough circles transformation to frame for a range of radii
         """
-        # create houghspace
+        # create r houghspaces for each radii r
         rows, cols = frame.shape
         self.hough_space = np.zeros((self.r_size, rows, cols))
-        # precompute sin/cos thetas
+        # precompute sin(theta), cos(theta) for all theta
         thetas = np.arange(0, 360, self.t_step) * math.pi / 180
         cossin = np.column_stack((np.sin(thetas), np.cos(thetas)))
-        # get positions of non zero magnitude and set initial radius
+        # get positions of non-zero magnitude pixels and set initial radius
         points = np.column_stack(np.nonzero(frame))
         radius = self.min_r
         for r in range(self.r_size):
             for (y, x) in points:
-                # compute circle points
+                # compute circle points (y0, x0): y0=r-ysin(theta), x0=x-rcos(theta)
                 c_points = np.column_stack((y - cossin[:, 1] * radius, x - cossin[:, 0] * radius)).astype('int')
-                # remove points not in space
+                # remove circle points that do not fit in frame
                 c_points = c_points[np.where(~(c_points < 0).any(1) & (c_points[:, 0] < rows) & (c_points[:,1] < cols))]
-                # increment points
+                # increment circle points in frame
                 np.add.at(self.hough_space[r], (c_points[:, 0], c_points[:, 1]), 1)
             # increment radius
             radius += self.r_step
