@@ -43,5 +43,4 @@ class Sobel():
                 dfdy_val = self.dfdy[y][x]
                 self.magnitude[y][x] = math.sqrt((dfdx_val**2) + (dfdy_val**2))
                 self.direction[y][x] = math.atan2(dfdy_val, dfdx_val)
-                # if(self.magnitude[y][x] > 0) : print(self.magnitude[y][x])
         self.t_magnitude = threshold(self.magnitude, threshold_val)

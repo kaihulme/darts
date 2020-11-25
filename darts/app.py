@@ -31,7 +31,7 @@ def run():
     # hough lines
     print("\nApplying Hough lines transformation...")
     houghlines = HoughLines()
-    houghlines.transform(sobel.t_magnitude)
+    houghlines.transform(sobel.t_magnitude, sobel.direction)
     houghlines.threshold(threshold_val=10)
     write.houghlines(houghlines, name)
 

@@ -48,9 +48,10 @@ def radtodeg(frame):
     """
     pi = math.pi
     rows, cols = frame.shape
+    deg_frame = np.zeros((rows, cols))
     for y in range(rows):
         for x in range(cols):
             rad = frame[y][x]
             deg = (rad if rad >= 0 else 2*pi + rad) * 360 / 2*pi
-            frame[y][x] = deg
-    return frame
+            deg_frame[y][x] = deg
+    return deg_frame
