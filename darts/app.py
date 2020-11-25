@@ -14,12 +14,13 @@ def run():
     name = "rectangle"
     frame = read(name, "test", ".png")
     frame = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
+    write.write(frame, name + "_gray")
 
     # gaussain blur
     print("\nApplying gausian blur...")
     # gaussian = Gaussian(size=15)
     # frame = gaussian.blur(frame)
-    frame = cv.GaussianBlur(frame, (15,15), 0) # faster
+    frame = cv.GaussianBlur(frame, (15, 15), 0) # faster
     write.gaussian(frame, name)
 
     # sobel edge detection

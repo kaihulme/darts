@@ -1,14 +1,14 @@
 import math
-import cv2 as cv
 import numpy as np
 from darts.manipulation.utils import threshold
 
 class HoughLines():
-    # def __init__(self, min_r=10, max_r=100, r_step=1, t_step=1):
     def __init__(self, t_step=1):
         self.t_step = t_step
         self.hough_space = []
         self.t_hough_space = []
+
+    # SOMETHING SEEMS WRONG WITH THETA RANGE
 
     def transform(self, mag, dir, max_theta=180, dt_size=5):
         """

@@ -1,4 +1,5 @@
 import cv2 as cv
+import numpy as np
 from darts.io.read import getpath
 from darts.manipulation.utils import normalise, radtodeg
 
