@@ -51,8 +51,8 @@ def run():
     print("\nApplying Hough circles transformation...")
     houghcircles = HoughCircles(65, 85, 1)
     houghcircles.transform(sobel.t_magnitude)
+    houghcircles.threshold(threshold_val=100)
     houghcircles.sum()
-    houghcircles.threshold(sum_threshold_val=950, idv_threshold_val=80)
     write.houghcircles(houghcircles, name, all=True)
 
     # TODO CIRCLE DETECTION

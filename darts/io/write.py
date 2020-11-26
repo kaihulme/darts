@@ -43,7 +43,7 @@ def houghcircles(houghcircles, name, all=False):
             write(space, name + "_houghcircles_" + str(s + 1))
             write(t_space, name + "_houghcircles_" + str(s + 1) + "_threshold")
     write(houghcircles.hough_space_sum, name + "_houghcircles_sum")
-    write(houghcircles.t_hough_space_sum, name + "_houghcircles_sum_threshold")
+    # write(houghcircles.t_hough_space_sum, name + "_houghcircles_sum_threshold")
 
 def circles(frame, name):
     """

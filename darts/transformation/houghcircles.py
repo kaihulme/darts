@@ -55,14 +55,14 @@ class HoughCircles():
         """
         Sum hough space circles into one summed Hough space.
         """
-        self.hough_space_sum = np.sum(self.hough_space, axis=0)
+        self.hough_space_sum = np.sum(self.t_hough_space, axis=0)
 
-    def threshold(self, sum_threshold_val, idv_threshold_val):
+    def threshold(self, threshold_val):
         """
         Threshold each hough space, as well as the sum of Hough spaces.
         """
         self.t_hough_space = np.zeros(self.hough_space.shape)
         for r, space in enumerate(self.hough_space):
-            self.t_hough_space[r] = threshold(space, idv_threshold_val)
+            self.t_hough_space[r] = threshold(space, threshold_val)
 
-        self.t_hough_space_sum = threshold(self.hough_space_sum, sum_threshold_val)
+        # self.t_hough_space_sum = threshold(self.hough_space_sum, sum_threshold_val)
