@@ -1,4 +1,5 @@
 import cv2 as cv
+import darts.io.draw as draw
 import darts.io.write as write
 from darts.io.read import read
 from darts.manipulation.gaussian import Gaussian
@@ -12,9 +13,9 @@ def run():
     """
     Face and dartboard detection using Viola Jones and Hough Transform methods.
     """
-    name = "dart0"
-    frame = read(name, "test", ".jpg")
-    frame = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
+    name = "coins1"
+    frame_original = read(name, "test", ".png")
+    frame = cv.cvtColor(frame_original, cv.COLOR_BGR2GRAY)
     write.write(frame, name + "_gray")
 
     # viola jones face detection
@@ -55,6 +56,7 @@ def run():
     # TODO CIRCLE DETECTION
     circledetector = CircleDetector(houghcircles)
     circledetector.detect()
+    draw.circles(frame_original, circledetector.circles, name)
 
     # TODO ENSEMBLE HOUGH LINES/CIRCLES
 

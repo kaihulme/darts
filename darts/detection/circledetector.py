@@ -20,7 +20,7 @@ class CircleDetector():
             radius = self.min_r + radius_i * self.r_step
             circle = np.array([radius, y, x])
             self.circles.append(circle)
-        print("\nCircles found :\n", self.circles)
+        print("\nCircles found :", self.circles)
 
 
 def localmaxima(frame, min_dist):

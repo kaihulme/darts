@@ -44,3 +44,9 @@ def houghcircles(houghcircles, name, all=False):
             write(t_space, name + "_houghcircles_" + str((s + 1) * houghcircles.r_size) + "_threshold")
     write(houghcircles.hough_space_sum, name + "_houghcircles_sum")
     write(houghcircles.t_hough_space_sum, name + "_houghcircles_sum_threshold")
+
+def circles(frame, name):
+    """
+    Write image with circles
+    """
+    write(frame, name + "_circles")
