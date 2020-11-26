@@ -1,6 +1,4 @@
-from darts.io.write import houghcircles
 import math
-import cv2 as cv
 import numpy as np
 from darts.manipulation.utils import threshold
 
@@ -56,6 +54,8 @@ class HoughCircles():
         """
         Threshold each hough space, as well as the sum of Hough spaces.
         """
+        self.t_hough_space = np.zeros(self.hough_space.shape)
         for r, space in enumerate(self.hough_space):
-            self.hough_space[r] = threshold(space, threshold_val)
-        self.t_hough_space_sum = threshold(self.hough_space_sum, threshold_val)
+            self.t_hough_space[r] = threshold(space, threshold_val)
+
+        self.t_hough_space_sum = threshold(self.hough_space_sum, threshold_val*10)
