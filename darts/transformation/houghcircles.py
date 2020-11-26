@@ -1,5 +1,6 @@
 import math
 import numpy as np
+from tqdm import tqdm
 from darts.manipulation.utils import threshold
 
 class HoughCircles():
@@ -19,16 +20,20 @@ class HoughCircles():
         """
         Apply Hough circles transformation to frame for a range of radii
         """
-        # create r houghspaces for each radii r
+         # create r houghspaces for each radii r
         rows, cols = frame.shape
         max_theta = 360
         self.hough_space = np.zeros((self.r_size, rows, cols))
+
         # precompute sin(theta), cos(theta) for all theta
-        thetas = np.arange(0, max_theta + 1, self.t_step) * math.pi / 180
+        thetas = np.arange(0, max_theta + 1) * math.pi / 180
         cossin = np.column_stack((np.sin(thetas), np.cos(thetas)))
+
         # get positions of non-zero magnitude pixels and set initial radius
         points = np.column_stack(np.nonzero(frame))
         radius = self.min_r
+        # progress bar
+        pbar = tqdm(total=((len(points)) * (self.r_size)))
         for r in range(self.r_size):
             for (y, x) in points:
                 # compute circle points (y0, x0): y0=r-ysin(theta), x0=x-rcos(theta)
@@ -41,6 +46,8 @@ class HoughCircles():
                                             & (c_points[:,1] < cols))]
                 # increment circle points in frame
                 np.add.at(self.hough_space[r], (c_points[:, 0], c_points[:, 1]), 1)
+                # update progress bar
+                pbar.update(1)
             # increment radius
             radius += self.r_step
 
@@ -50,12 +57,12 @@ class HoughCircles():
         """
         self.hough_space_sum = np.sum(self.hough_space, axis=0)
 
-    def threshold(self, threshold_val):
+    def threshold(self, sum_threshold_val, idv_threshold_val):
         """
         Threshold each hough space, as well as the sum of Hough spaces.
         """
         self.t_hough_space = np.zeros(self.hough_space.shape)
         for r, space in enumerate(self.hough_space):
-            self.t_hough_space[r] = threshold(space, threshold_val)
+            self.t_hough_space[r] = threshold(space, idv_threshold_val)
 
-        self.t_hough_space_sum = threshold(self.hough_space_sum, threshold_val*10)
+        self.t_hough_space_sum = threshold(self.hough_space_sum, sum_threshold_val)

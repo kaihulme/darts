@@ -13,8 +13,10 @@ def run():
     """
     Face and dartboard detection using Viola Jones and Hough Transform methods.
     """
-    name = "coins1"
-    frame_original = read(name, "test", ".png")
+    # name = "coins1"
+    # frame_original = read(name, "test", ".png")
+    name = "dart14"
+    frame_original = read(name, "test")    
     frame = cv.cvtColor(frame_original, cv.COLOR_BGR2GRAY)
     write.write(frame, name + "_gray")
 
@@ -26,14 +28,14 @@ def run():
 
     # gaussain blur
     print("\nApplying gausian blur...")
-    gaussian = Gaussian(size=15)
+    gaussian = Gaussian(size=3)
     frame = gaussian.blur(frame)
     write.gaussian(frame, name)
 
     # sobel edge detection
     print("\nDetecting edges...")
     sobel = Sobel()
-    sobel.edgedetection(frame, threshold_val=60)
+    sobel.edgedetection(frame, threshold_val=250)
     write.sobel(sobel, name)
 
     # hough lines
@@ -47,15 +49,16 @@ def run():
 
     # hough circles
     print("\nApplying Hough circles transformation...")
-    houghcircles = HoughCircles(35, 50, 1, 20)
+    houghcircles = HoughCircles(65, 85, 1)
     houghcircles.transform(sobel.t_magnitude)
     houghcircles.sum()
-    houghcircles.threshold(threshold_val=15)
-    write.houghcircles(houghcircles, name, all=False)
+    houghcircles.threshold(sum_threshold_val=950, idv_threshold_val=80)
+    write.houghcircles(houghcircles, name, all=True)
 
     # TODO CIRCLE DETECTION
+    print("\n\nDetecting circles...")
     circledetector = CircleDetector(houghcircles)
-    circledetector.detect()
+    circledetector.detect(min_dist=50)
     draw.circles(frame_original, circledetector.circles, name)
 
     # TODO ENSEMBLE HOUGH LINES/CIRCLES

@@ -38,10 +38,10 @@ def houghcircles(houghcircles, name, all=False):
     """
     Write hough spaces to file. 
     """
-    if (all):
+    if (all == True):
         for s, (space, t_space) in enumerate(zip(houghcircles.hough_space, houghcircles.t_hough_space)):
-            write(space, name + "_houghcircles_" + str((s + 1) * houghcircles.r_size))
-            write(t_space, name + "_houghcircles_" + str((s + 1) * houghcircles.r_size) + "_threshold")
+            write(space, name + "_houghcircles_" + str(s + 1))
+            write(t_space, name + "_houghcircles_" + str(s + 1) + "_threshold")
     write(houghcircles.hough_space_sum, name + "_houghcircles_sum")
     write(houghcircles.t_hough_space_sum, name + "_houghcircles_sum_threshold")
 

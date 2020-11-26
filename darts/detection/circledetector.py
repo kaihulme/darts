@@ -1,3 +1,4 @@
+from darts.io.draw import circles
 import numpy as np
 import scipy.ndimage.filters as filters
 from skimage.feature import peak_local_max
@@ -20,7 +21,7 @@ class CircleDetector():
             radius = self.min_r + radius_i * self.r_step
             circle = np.array([radius, y, x])
             self.circles.append(circle)
-        print("\nCircles found :", self.circles)
+        print(f"\n{len(self.circles)} circles found: {self.circles}")
 
 
 def localmaxima(frame, min_dist):

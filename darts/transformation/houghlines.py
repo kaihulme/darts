@@ -1,5 +1,6 @@
 import math
 import numpy as np
+from tqdm import tqdm
 from darts.manipulation.utils import threshold
 
 class HoughLines():
@@ -24,7 +25,8 @@ class HoughLines():
                                   np.cos(thetas * math.pi / 180)))
         # get positions of non-zero magnitude pixels
         points = np.column_stack(np.nonzero(mag))
-        for (y, x) in points:
+        # progress bar
+        for (y, x) in tqdm(points):
             # Get range of 0: Δ0 = 0 from gradient direction ± the Δ0 size
             dir_theta = np.rad2deg(dir[y][x]).astype('int')
             dt = (max(-max_theta, dir_theta - dt_size), min(max_theta, dir_theta + dt_size))

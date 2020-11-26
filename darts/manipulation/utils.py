@@ -30,7 +30,7 @@ def normalise(frame):
     frame_copy = np.copy(frame)
     min = np.min(frame_copy)
     max = np.max(frame_copy)
-    frame_copy = (frame - min) / (max - min) * 255
+    if (max - min != 0) : frame_copy = (frame - min) / (max - min) * 255
     return frame_copy
 
 # np.rad2deg() is faster
