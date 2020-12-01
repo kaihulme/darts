@@ -34,6 +34,12 @@ def houghlines(houghlines, name):
     write(houghlines.hough_space, name + "_houghlines")
     write(houghlines.t_hough_space, name + "_houghlines_threshold")
 
+def lines(frame, name):
+    """
+    Write image with circles
+    """
+    write(frame, name + "_lines")
+
 def houghcircles(houghcircles, name, all=False):
     """
     Write hough spaces to file. 

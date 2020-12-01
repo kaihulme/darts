@@ -2,6 +2,7 @@ import os
 import math
 import cv2 as cv
 import numpy as np
+from skimage.feature.peak import peak_local_max
 
 # faster with numpy: result=(frame>threshold)*frame, or frame[frame<threshold]=0
 def threshold(frame, threshold):
@@ -32,6 +33,10 @@ def normalise(frame):
     max = np.max(frame_copy)
     if (max - min != 0) : frame_copy = (frame - min) / (max - min) * 255
     return frame_copy
+
+def localmaxima(frame, min_dist):
+    centres = peak_local_max(frame, min_dist)
+    return centres
 
 # np.rad2deg() is faster
 def radtodeg(frame):
