@@ -34,7 +34,7 @@ def run():
     # sobel edge detection
     print("\nDetecting edges...")
     sobel = Sobel()
-    sobel.edgedetection(frame, threshold_val=200)
+    sobel.edgedetection(frame, threshold_val=100)
     write.sobel(sobel, name)
 
     # hough lines
@@ -52,7 +52,7 @@ def run():
 
     # hough circles
     print("\nApplying Hough circles transformation...")
-    houghcircles = HoughCircles(60, 80)
+    houghcircles = HoughCircles(50, 200)
     houghcircles.transform(sobel.t_magnitude, sobel.direction)
     houghcircles.threshold(threshold_val=25)
     houghcircles.sum()
