@@ -1,29 +1,50 @@
-from darts.detection.linedetector import LineDetector
+import os
+import sys
 import cv2 as cv
 import darts.io.draw as draw
 import darts.io.write as write
-from darts.io.read import read
+from darts.io.read import readfromargs
 from darts.manipulation.gaussian import Gaussian
 from darts.transformation.houghlines import HoughLines
 from darts.transformation.houghcircles import HoughCircles
 from darts.detection.edgedetector import Sobel
-from darts.detection.circledetector import CircleDetector
 from darts.detection.violajones import ViolaJones
+from darts.detection.linedetector import LineDetector
+from darts.detection.circledetector import CircleDetector
 
 def run():
     """
     Face and dartboard detection using Viola Jones and Hough Transform methods.
     """
-    name = "dart1"
-    frame_original = read(name, "test")    
+    # thresholding params
+    sobel_t_val = 150
+    houghlines_t_val = 25
+    houghcircles_t_val = 30
+    houghcircles_min_r = 50
+    houghcircles_max_r = 200
+    houghcircles_r_step = 5
+    lines_mindist = 10
+    circles_mindist = 50
+    all_spaces = False
+
+    # load frame from arguments    
+    frame_original, name = readfromargs(sys.argv)
+
+    # create greyscale image
     frame = cv.cvtColor(frame_original, cv.COLOR_BGR2GRAY)
     write.write(frame, name + "_gray")
 
     # viola jones face detection
-    # face_clf = ViolaJones("frontalface")
-    # for name in test_names:
-    # face_boxes = face_clf.find_bounding_boxes(name)
-    # face_clf.draw_box(name, face_boxes)
+    print("\nDetecting faces with Viola Jones...")
+    facedetector = ViolaJones("frontalface")
+    face_boxes = facedetector.find_bounding_boxes(frame_original, name)
+    draw.face_boxes(frame_original, face_boxes, name)
+
+    # viola jones dartboard detection
+    print("\nDetecting dartboards with Viola Jones...")
+    dartboarddetector = ViolaJones("dartboard")  
+    dartboard_boxes = dartboarddetector.find_bounding_boxes(frame_original, name)
+    draw.dart_boxes(frame_original, dartboard_boxes, name)
 
     # gaussain blur
     print("\nApplying gaussian blur...")
@@ -31,48 +52,42 @@ def run():
     frame = gaussian.blur(frame)
     write.gaussian(frame, name)
 
-    # sobel edge detection
-    print("\nDetecting edges...")
+    # sobel edge detectionedges
+    print("\nDetecting edges with Sobel edge detector...")
     sobel = Sobel()
-    sobel.edgedetection(frame, threshold_val=100)
+    sobel.edgedetection(frame, threshold_val=sobel_t_val)
     write.sobel(sobel, name)
 
     # hough lines
     print("\nApplying Hough lines transformation...")
     houghlines = HoughLines()
     houghlines.transform(sobel.t_magnitude, sobel.direction)
-    houghlines.threshold(threshold_val=20)
+    houghlines.threshold(threshold_val=houghlines_t_val)
     write.houghlines(houghlines, name)
 
-    # TODO LINE DETECTION
-    print("\n\nDetecting lines...")
+    # line detection
+    print("\nDetecting lines in Hough space...")
     linedetector = LineDetector(houghlines)
-    linedetector.detect(min_dist=50)
+    linedetector.detect(min_dist=lines_mindist)
     draw.lines(frame_original, linedetector.lines, name)
 
     # hough circles
     print("\nApplying Hough circles transformation...")
-    houghcircles = HoughCircles(50, 200)
+    houghcircles = HoughCircles(houghcircles_min_r,
+                                houghcircles_max_r,
+                                houghcircles_r_step)
     houghcircles.transform(sobel.t_magnitude, sobel.direction)
-    houghcircles.threshold(threshold_val=25)
+    houghcircles.threshold(threshold_val=houghcircles_t_val)
     houghcircles.sum()
-    write.houghcircles(houghcircles, name, all=True)
+    write.houghcircles(houghcircles, name, all=all_spaces)
 
     # detect circles
-    print("\n\nDetecting circles...")
+    print("\nDetecting circles in Hough space...")
     circledetector = CircleDetector(houghcircles)
-    circledetector.detect(min_dist=50)
+    circledetector.detect(min_dist=circles_mindist)
     draw.circles(frame_original, circledetector.circles, name)
 
     # TODO ENSEMBLE HOUGH LINES/CIRCLES
-
-    # viola jones dartboard detection
-    # # find dartboards    
-    # dartboard_clf = ViolaJones("dartboard")
-    # for name in test_names:    
-        # dartboard_boxes = dartboard_clf.find_bounding_boxes(name)
-        # dartboard_clf.draw_box(name, dartboard_boxes) 
-
     # TODO ENSEMBLE HOUGH / VJ
 
     # TODO ADDITIONAL METHOD FOR ENSEMBLE

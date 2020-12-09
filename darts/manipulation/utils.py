@@ -4,7 +4,7 @@ import cv2 as cv
 import numpy as np
 from skimage.feature.peak import peak_local_max
 
-# faster with numpy: result=(frame>threshold)*frame, or frame[frame<threshold]=0
+
 def threshold(frame, threshold):
     """
     Set values in frame below threshold to 0.
@@ -13,7 +13,7 @@ def threshold(frame, threshold):
     frame_copy[frame_copy < threshold] = 0
     return frame_copy
 
-# make similar change to above
+
 def threshold_abs(frame, threshold):
     """
     Set values in frame below threshold to 0 and above to 255.
@@ -23,7 +23,7 @@ def threshold_abs(frame, threshold):
     frame_copy[frame_copy >= threshold] = 255
     return frame_copy
 
-# sklearn.preprocessing.normalise()
+
 def normalise(frame):
     """
     MinMax normalisation of frame between 0-255
@@ -34,11 +34,12 @@ def normalise(frame):
     if (max - min != 0) : frame_copy = (frame - min) / (max - min) * 255
     return frame_copy
 
+
 def localmaxima(frame, min_dist):
     centres = peak_local_max(frame, min_dist)
     return centres
 
-# np.rad2deg() is faster
+
 def radtodeg(frame):
     """
     Convert a matrix of radian angles to degrees.

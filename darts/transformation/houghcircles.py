@@ -37,7 +37,6 @@ class HoughCircles():
         pbar = tqdm(total=((len(points)) * (self.r_size)))
         for r in range(self.r_size):
             for (y, x) in points:
-
                 dir_theta = np.rad2deg(dir[y][x]).astype('int')
                 dt = (dir_theta - dt_size + max_theta, dir_theta + dt_size + max_theta)
 

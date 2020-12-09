@@ -34,6 +34,12 @@ def houghlines(houghlines, name):
     write(houghlines.hough_space, name + "_houghlines")
     write(houghlines.t_hough_space, name + "_houghlines_threshold")
 
+def lines(frame, name):
+    """
+    Write image with circles
+    """
+    write(frame, name + "_lines")
+
 def houghcircles(houghcircles, name, all=False):
     """
     Write hough spaces to file. 
@@ -43,10 +49,21 @@ def houghcircles(houghcircles, name, all=False):
             write(space, name + "_houghcircles_" + str(s + 1))
             write(t_space, name + "_houghcircles_" + str(s + 1) + "_threshold")
     write(houghcircles.hough_space_sum, name + "_houghcircles_sum")
-    # write(houghcircles.t_hough_space_sum, name + "_houghcircles_sum_threshold")
 
 def circles(frame, name):
     """
     Write image with circles
     """
     write(frame, name + "_circles")
+
+def face_boxes(frame, name):
+    """
+    Write image with Viola Jones face detection bounding boxes
+    """
+    write(frame, name + "_vj_faces")
+
+def dart_boxes(frame, name):
+    """
+    Write image with Viola Jones dartboard detection bounding boxes
+    """
+    write(frame, name + "_vj_dartboards")
