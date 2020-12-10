@@ -21,24 +21,42 @@ class EnsembleDetector():
                 cb_y_min = cy - cr
                 c_box = (cb_x_min, cb_y_min, 2*cr, 2*cr)
                 iou = metrics.score_iou(d_box, c_box)
+
+                print("iou", iou)
+
                 # if circle bounding box IOU with cascade box > 0.5 assume dartboard
-                if (iou > 0.5):
+                if (iou > 0.4):
                     e_box = np.array(((np.asarray(d_box) + np.asarray(c_box)) / 2).astype('int'))
-                    print(f"e_box {e_box}")
-                    self.boxes = np.vstack(((self.boxes, e_box))) if self.boxes.size else np.array([e_box])
+                    for box in self.boxes:
+                        if (boxesdist(e_box, box) > min_dist):
+                            self.boxes = np.vstack(((self.boxes, e_box))) if self.boxes.size else np.array([e_box])
+                            break
+                        else:
+                            print("vj and circle box too close")
+                else:
+                    print("iou too low")
             # if there are enough line intersections with cascade box assume circle
-            if (e_box is None and intersectcount(self.lines, d_box) > 4):
-                self.boxes = np.vstack(((self.boxes, d_box))) if self.boxes.size else np.array([d_box])
-        # for each detected hough circle
-        for (cr, cy, cx) in self.circles:
-            cb_x_min = cx - cr
-            cb_y_min = cy - cr
-            c_box = (cb_x_min, cb_y_min, 2*cr, 2*cr)
-            # if there are enough line intersections with hough circle assume dartboard
-            if (intersectcount(self.lines, c_box) > 4):
+            if (intersectcount(self.lines, d_box) > 4):
                 for box in self.boxes:
-                    if (boxesdist(c_box, box) > min_dist):
-                        self.boxes = np.vstack(((self.boxes, c_box))) if self.boxes.size else np.array([c_box])
+                    if (boxesdist(e_box, box) > min_dist):
+                        self.boxes = np.vstack(((self.boxes, d_box))) if self.boxes.size else np.array([d_box])
+                        break
+                    else:
+                        print("lineinvj too close")
+        # for each detected hough circle
+        if (len(self.vj_boxes) < len(self.circles)):
+            for (cr, cy, cx) in self.circles:
+                cb_x_min = cx - cr
+                cb_y_min = cy - cr
+                c_box = (cb_x_min, cb_y_min, 2*cr, 2*cr)
+                # if there are enough line intersections with hough circle assume dartboard
+                if (intersectcount(self.lines, c_box) > 4):
+                    for box in self.boxes:
+                        if (boxesdist(c_box, box) > min_dist):
+                            self.boxes = np.vstack(((self.boxes, c_box))) if self.boxes.size else np.array([c_box])
+                            break
+        else:
+            print("same vj as hough circles")
 
 
 def intersectcount(lines, box):
@@ -74,4 +92,5 @@ def boxesdist(a, b):
     a_centre = (ax + aw / 2, ay + ah / 2)
     b_centre = (bx + bw / 2, by + bh / 2)
     dist = np.sqrt((ax - bx)**2 + (ay -  by)**2)
+    print("dist:", dist)
     return dist
