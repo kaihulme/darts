@@ -9,7 +9,7 @@ class EnsembleDetector():
         self.vj_boxes = violajones.boxes
         self.lines = linedetector.lines
         self.circles = circledetector.circles
-        self.boxes = np.array([])
+        self.boxes = None
 
     def detect(self, frame, min_dist=20):     
         # for each cascade dartboard box
@@ -24,11 +24,17 @@ class EnsembleDetector():
                 if (iou > 0.4):
                     e_box = np.array(((np.asarray(d_box) + np.asarray(c_box)) / 2).astype('int'))
                     if checknotduplicate(e_box, self.boxes, min_dist):
-                        self.boxes = np.vstack(((self.boxes, e_box))) if self.boxes.size else np.array([e_box])          
+                        if self.boxes == None:
+                            self.boxes = self.boxes.append(e_box)
+                        else: 
+                            self.boxes = [e_box]
             # if there are enough line intersections with cascade box assume circle
             if (intersectcount(self.lines, d_box) > 4):
                 if checknotduplicate(d_box, self.boxes, min_dist):
-                    self.boxes = np.vstack(((self.boxes, d_box))) if self.boxes.size else np.array([d_box])
+                    if self.boxes == None:
+                        self.boxes = self.boxes.append(d_box)
+                    else:
+                        self.boxes = [d_box]
         # for each detected hough circle
         for (cr, cy, cx) in self.circles:
             cb_x_min = cx - cr
@@ -36,8 +42,11 @@ class EnsembleDetector():
             c_box = (cb_x_min, cb_y_min, 2*cr, 2*cr)
             # if there are enough line intersections with hough circle assume dartboard
             if (intersectcount(self.lines, c_box) > 4):
-               if checknotduplicate(c_box, self.boxes, min_dist):
-                    self.boxes = np.vstack(((self.boxes, c_box))) if self.boxes.size else np.array([c_box])
+                if checknotduplicate(c_box, self.boxes, min_dist):
+                    if self.boxes == None:
+                        self.boxes = self.boxes.append(c_box)
+                    else:
+                        self.boxes = [c_box]
         n_boards = len(self.boxes)
         if n_boards == 0: print(f"\nNo dartboards detected")
         elif n_boards == 1: print(f"\nDetected a dartboard!")

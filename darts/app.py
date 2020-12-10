@@ -13,6 +13,8 @@ from darts.detection.violajones import ViolaJones
 from darts.detection.linedetector import LineDetector
 from darts.detection.circledetector import CircleDetector
 from darts.detection.ensembledetector import EnsembleDetector
+from darts.tests.groundtruths import testrueboxes
+from darts.tests.evaluate import evaluateresults
 
 def run():
     """
@@ -23,9 +25,9 @@ def run():
     sobel_t_val = 100
     houghlines_t_val = 30
     houghcircles_t_val = 30
-    houghcircles_min_r = 50
-    houghcircles_max_r = 200
-    houghcircles_r_step = 1
+    houghcircles_min_r = 20
+    houghcircles_max_r = 150
+    houghcircles_r_step = 5
     lines_mindist = 20
     circles_mindist = 100
     ensemble_mindist = 100
@@ -37,6 +39,13 @@ def run():
     frame_original, name = readfromargs(sys.argv)
     frame = frame_original.copy()
     print(f"\nDetecting dartboards in {name}...")
+
+    # get ground truth boxes for test image
+    true_boxes = testrueboxes(name)
+
+    print(true_boxes)
+
+    draw.true_boxes(frame, true_boxes, name)
 
     # gaussain blur
     print("\n[1/9]: Applying gaussian blur...")
@@ -110,6 +119,10 @@ def run():
 
     # TODO BlobDetector (ellipse)
 
-    # TODO Print metrics!
+    # output ground truth boxes with predicted boxes
+    draw.true_pred_boxes(frame, true_boxes, draw.ensemble_boxes, name)
+
+    # TODO calculate metrics
+
 
     print("\nComplete!")

@@ -20,7 +20,7 @@ def score_tpr(true_boxes, pred_boxes):
     fns = 0
     for true_box in true_boxes:
         for pred_box in pred_boxes:
-            if (score_iou(true_box, pred_box) > 0.5):
+            if not true_box == pred_box and score_iou(true_box, pred_box) > 0.4:
                 tps += 1
                 break
             fns += 1
@@ -62,18 +62,18 @@ def get_tps(true_boxes, pred_boxes):
     tps = 0
     for true_box in true_boxes:
         for pred_box in pred_boxes:
-            if (score_iou(true_box, pred_box) > 0.5):
+            if not true_box == pred_box and score_iou(true_box, pred_box > 0.4):
                 tps += 1
                 break
     return tps
 
 
 def get_fps(true_boxes, pred_boxes):
-    fps = 0
+    fps = len(pred_boxes)
     for pred_box in pred_boxes:
         for true_box in true_boxes:
-            if (score_iou(true_box, pred_box) > 0.5):
-                fps += 1
+            if not true_box == pred_box and score_iou(true_box, pred_box > 0.4):
+                fps -= 1
                 break
     return fps
 
@@ -82,9 +82,9 @@ def get_fns(true_boxes, pred_boxes):
     fns = 0
     for true_box in true_boxes:
         for pred_box in pred_boxes:
-            if (score_iou(true_box, pred_box) > 0.5):
+            if not true_box == pred_box and score_iou(true_box, pred_box > 0.4):
                 break
-            fns += 1
+        fns += 1
     return fns
 
 # ignore metrics using true

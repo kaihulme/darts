@@ -56,6 +56,12 @@ def circles(frame, name):
     """
     write(frame, name + "_circles")
 
+def true_boxes(frame, name):
+    """
+    Write image with ground truth bounding boxes
+    """
+    write(frame, name + "_true_dartboards")
+
 def face_boxes(frame, name):
     """
     Write image with Viola Jones face detection bounding boxes
@@ -73,6 +79,13 @@ def ensemble_boxes(frame, name):
     Write image with ensemble dartboard detection bounding boxes
     """
     write(frame, name + "_ensemble_dartboards")
+
+def true_pred(frame, name):
+    """
+    Write image with ground truth bounding boxes
+    and predicted bounding boxes
+    """
+    write(frame, name + "_true_pred_dartboards")
 
 def clustered(frame, name):
     """
