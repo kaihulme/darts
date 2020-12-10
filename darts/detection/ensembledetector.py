@@ -6,52 +6,72 @@ from darts.tools.utils import localmaxima
 
 class EnsembleDetector():
     def __init__(self, violajones, linedetector, circledetector):
-
         self.vj_boxes = violajones.boxes
         self.lines = linedetector.lines
         self.circles = circledetector.circles
+        self.boxes = np.array([])
+
+    def detect(self, frame, min_dist=20):     
+        # for each cascade dartboard box
+        for d_box in self.vj_boxes:
+            e_box = None
+            # for each circle
+            for (cr, cy, cx) in self.circles:
+                cb_x_min = cx - cr
+                cb_y_min = cy - cr
+                c_box = (cb_x_min, cb_y_min, 2*cr, 2*cr)
+                iou = metrics.score_iou(d_box, c_box)
+                # if circle bounding box IOU with cascade box > 0.5 assume dartboard
+                if (iou > 0.5):
+                    e_box = np.array(((np.asarray(d_box) + np.asarray(c_box)) / 2).astype('int'))
+                    print(f"e_box {e_box}")
+                    self.boxes = np.vstack(((self.boxes, e_box))) if self.boxes.size else np.array([e_box])
+            # if there are enough line intersections with cascade box assume circle
+            if (e_box is None and intersectcount(self.lines, d_box) > 4):
+                self.boxes = np.vstack(((self.boxes, d_box))) if self.boxes.size else np.array([d_box])
+        # for each detected hough circle
+        for (cr, cy, cx) in self.circles:
+            cb_x_min = cx - cr
+            cb_y_min = cy - cr
+            c_box = (cb_x_min, cb_y_min, 2*cr, 2*cr)
+            # if there are enough line intersections with hough circle assume dartboard
+            if (intersectcount(self.lines, c_box) > 4):
+                for box in self.boxes:
+                    if (boxesdist(c_box, box) > min_dist):
+                        self.boxes = np.vstack(((self.boxes, c_box))) if self.boxes.size else np.array([c_box])
 
 
-    def detect(self, frame, min_dist=20):
+def intersectcount(lines, box):
+    """
+    Get number of intersections within box
+    """
+    count = 0
+    x_min = box[0]
+    y_min = box[1]
+    x_max = x_min + box[2]
+    y_max = y_min + box[3]
+    # for each line
+    for (x1, y1, x2, y2) in lines:
+        # get points of line in box
+        coeffs = np.polyfit([x1, x2], [y1, y2], 1)
+        linline = np.poly1d(coeffs)
+        xs = np.linspace(x_min, x_max, 10)
+        ys = linline(xs)
+        # increment if line intersects box
+        for y in ys:
+            if y > y_min and y < y_max:
+                count += 1
+                break
+    return count
 
-        boards = np.array([])
-        
-        for box in self.vj_boxes:
-            x_min, y_min = box[0], box[1]
-            x_max = x_min + box[2]
-            y_max = y_min + box[3]
 
-            print(f"\nbox ({x_min}, {y_min}), ({x_max}, {y_max})")
-
-            for circle in self.circles:
-
-                c_r = circle[0]
-                c_y = circle[1]
-                c_x = circle[2]
-                print(f"circle ({c_r}, {c_x}, {c_y})")
-
-                cb_x_min = c_x - c_r
-                cb_y_min = c_y - c_r
-                cb_x_max = c_x + c_r
-                cb_y_max = c_y + c_r
-                
-                c_box = [cb_x_min, cb_y_min, cb_x_max, cb_y_max]
-                print(f"c_box ({cb_x_min}, {cb_y_min}), ({cb_x_max}, {cb_y_max})")
-
-                draw.bb(frame, box, c_box, "testdart0")
-
-                iou = metrics.score_iou(box, c_box)
-                print("iou", iou)
-
-                if (c_x > x_min and c_x < x_max and c_y > y_min and c_y < y_max):
-                    boards = np.append(boards, box)
-
-            for line in self.lines:
-                # print("\nline :", line)
-
-                line_x1 = line[0]
-                line_y1 = line[1]
-                line_x2 = line[2]
-                line_x2 = line[3]
-
-        print("boards", boards)
+def boxesdist(a, b):
+    """
+    Check distance between two box centres
+    """
+    ax, ay, aw, ah = a
+    bx, by, bw, bh = b
+    a_centre = (ax + aw / 2, ay + ah / 2)
+    b_centre = (bx + bw / 2, by + bh / 2)
+    dist = np.sqrt((ax - bx)**2 + (ay -  by)**2)
+    return dist

@@ -14,7 +14,7 @@ def lines(frame, lines, name):
 
 def circles(frame, circles, name):
     """
-    Draw circles on frame.
+    Draw circles on frame.does the 
     """
     frame_copy = np.copy(frame)
     for (r, y, x) in circles:
@@ -32,34 +32,25 @@ def face_boxes(frame, face_boxes, name):
     write.face_boxes(frame_copy, name)
 
 
-def dart_boxes(frame, face_boxes, name):
+def dart_boxes(frame, dart_boxes, name):
     """
     Draw boxes on frame
     """
     frame_copy = np.copy(frame)
-    for (x,y,w,h) in face_boxes:
+    for (x,y,w,h) in dart_boxes:
         frame_copy = cv.rectangle(frame_copy, (x,y), (x+w,y+h), (0,255,0), 2)
     write.dart_boxes(frame_copy, name)
 
 
 ###
 
-def bb(frame, ba, bb, name):
+def ensemble_boxes(frame, ensemble_boxes, name):
     """
     Draw boxes on frame
     """
     frame_copy = np.copy(frame)
-    
-    x=ba[0]
-    y=ba[1]
-    w=ba[2]
-    h=ba[3]
-    frame_copy = cv.rectangle(frame_copy, (x,y), (x+w,y+h), (0,255,0), 2)
-
-    x=bb[0]
-    y=bb[1]
-    w=bb[2]
-    h=bb[3]
-    frame_copy = cv.rectangle(frame_copy, (x,y), (x+w,y+h), (0,255,0), 2)
-    
-    write.face_boxes(frame_copy, name)
+    for (x, y, w, h) in ensemble_boxes:
+        # print(box)
+        # x, y, w, h = box[0], box[1], box[2], box[3]
+        frame_copy = cv.rectangle(frame_copy, (x,y), (x+w,y+h), (0,255,0), 2)
+    write.ensemble_boxes(frame_copy, name)

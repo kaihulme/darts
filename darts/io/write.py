@@ -68,6 +68,12 @@ def dart_boxes(frame, name):
     """
     write(frame, name + "_vj_dartboards")
 
+def ensemble_boxes(frame, name):
+    """
+    Write image with ensemble dartboard detection bounding boxes
+    """
+    write(frame, name + "_ensemble_dartboards")
+
 def clustered(frame, name):
     """
     Write clustered image

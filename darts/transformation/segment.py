@@ -26,7 +26,7 @@ class Segmenter():
         # removedCluster = 1
         # cannyImage = np.copy(original_frame).reshape((-1, 3))
         # cannyImage[labels.flatten() == removedCluster] = [0, 0, 0]
-        # cannyImage = cv.Canny(cannyImage,100,200).reshape(original_frame.shape)
+        # cannyImage = cv.Canny(cannyImage`,100,200).reshape(original_frame.shape)
         # write.canny(cannyImage, name)
         # ##
         # initialContoursImage = np.copy(cannyImage)

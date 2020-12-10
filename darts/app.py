@@ -28,6 +28,7 @@ def run():
     houghcircles_r_step = 5
     lines_mindist = 20
     circles_mindist = 50
+    ensemble_mindist = 50
     all_spaces = False
     kmeans = False
     k = 2
@@ -102,7 +103,8 @@ def run():
     ensembledetector = EnsembleDetector(dartboarddetector,
                                         linedetector,
                                         circledetector)
-    ensembledetector.detect(frame)
+    ensembledetector.detect(frame, ensemble_mindist)
+    draw.ensemble_boxes(frame_original, ensembledetector.boxes, name)
 
     # TODO BlobDetector (ellipse)
 
