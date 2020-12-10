@@ -20,4 +20,4 @@ class CircleDetector():
             radius = self.min_r + radius_i * self.r_step
             circle = np.array([radius, y, x])
             self.circles.append(circle)
-        print(f"\n{len(self.circles)} circles found: {self.circles}")
+        # print(f"\n{len(self.circles)} circles found: {self.circles}")

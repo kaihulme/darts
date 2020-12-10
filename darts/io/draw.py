@@ -40,9 +40,7 @@ def dart_boxes(frame, dart_boxes, name):
     for (x,y,w,h) in dart_boxes:
         frame_copy = cv.rectangle(frame_copy, (x,y), (x+w,y+h), (0,255,0), 2)
     write.dart_boxes(frame_copy, name)
-
-
-###
+    
 
 def ensemble_boxes(frame, ensemble_boxes, name):
     """

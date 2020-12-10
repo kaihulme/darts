@@ -1,3 +1,5 @@
+printf "\nRUNNING ALL DART DETECTION TESTS...\n"
+
 python -m darts dart0.jpg
 python -m darts dart1.jpg
 python -m darts dart2.jpg
@@ -14,3 +16,5 @@ python -m darts dart12.jpg
 python -m darts dart13.jpg
 python -m darts dart14.jpg
 python -m darts dart15.jpg
+
+printf "TESTING COMPLETE! see darts/out\n\n"

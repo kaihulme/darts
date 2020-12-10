@@ -17,9 +17,6 @@ def readfromargs(argv, loc="test"):
 
 def read(name, loc, ext=".jpg"):
     path = getpath(name, loc, ext)
-
-    print("path", path)
-
     if (os.path.exists(path)):
         img = cv.imread(path)
     else:
