@@ -28,6 +28,36 @@ def score_tpr(true_boxes, pred_boxes):
     return tpr
 
 
+def score_precision(true_boxes, pred_boxes):
+    """
+    Precision = TP/(TP+FP)
+    """
+    tps = get_tps(true_boxes, pred_boxes)
+    fps = get_fps(true_boxes, pred_boxes)
+    precision = tps / (tps + fps)
+    return precision
+
+
+def score_recall(true_boxes, pred_boxes):
+    """
+    Recall = TP/(TP+FN)
+    """
+    tps = get_tps(true_boxes, pred_boxes)
+    fns = get_fns(true_boxes, pred_boxes)
+    recall = tps / (tps + fns)
+    return recall
+
+
+def score_f1(true_boxes, pred_boxes):
+    """
+    F1 = 2 * (Sensitivity*Precision) / (Sensitivity+Precision)
+    """
+    precision = score_precision(true_boxes, pred_boxes)
+    recall = score_recall(true_boxes, pred_boxes)
+    f1 = 2*(recall * precision) / (recall + precision)
+    return f1
+    
+
 def get_tps(true_boxes, pred_boxes):
     tps = 0
     for true_box in true_boxes:
@@ -56,32 +86,6 @@ def get_fns(true_boxes, pred_boxes):
                 break
             fns += 1
     return fns
-
-
-def f1(true_boxes, pred_boxes):
-    """
-    F1 = 2 * (Sensitivity*Precision) / (Sensitivity+Precision)
-    """
-    sensitivity = sensitivity()
-    precision = precision
-    f1 = 2*(sensitivity * precision) / (sensitivity + precision)
-    return f1
-
-
-def precision(true_boxes, pred_boxes):
-    """
-    Precision = TP/(TP+FP)
-    """
-    tps = get_tps(true_boxes, pred_boxes)
-    fps = get_fps(true_boxes, pred_boxes)
-    return precision
-
-
-def recall(true_boxes, pred_boxes):
-    """
-    Recall = TP/(TP+FN)
-    """
-    return recall
 
 # ignore metrics using true
 # negative as hard to define
