@@ -22,19 +22,25 @@ class EnsembleDetector():
                 iou = metrics.score_iou(d_box, c_box)
                 # if circle bounding box IOU with cascade box > 0.5 assume dartboard
                 if (iou > 0.4):
-                    e_box = np.array(((np.asarray(d_box) + np.asarray(c_box)) / 2).astype('int'))
+                    # e_box = np.array(((np.asarray(d_box) + np.asarray(c_box)) / 2).astype('int'))
+                    e0 = int((d_box[0] + c_box[0]) / 2)
+                    e1 = int((d_box[1] + c_box[1]) / 2)
+                    e2 = int((d_box[2] + c_box[2]) / 2)
+                    e3 = int((d_box[3] + c_box[3]) / 2)
+                    e_box = [e0, e1, e2, e3]
+
                     if checknotduplicate(e_box, self.boxes, min_dist):
                         if self.boxes == None:
-                            self.boxes = self.boxes.append(e_box)
-                        else: 
                             self.boxes = [e_box]
+                        else: 
+                            self.boxes = self.boxes.append(e_box)
             # if there are enough line intersections with cascade box assume circle
             if (intersectcount(self.lines, d_box) > 4):
                 if checknotduplicate(d_box, self.boxes, min_dist):
                     if self.boxes == None:
-                        self.boxes = self.boxes.append(d_box)
-                    else:
                         self.boxes = [d_box]
+                    else:
+                        self.boxes = self.boxes.append(d_box)
         # for each detected hough circle
         for (cr, cy, cx) in self.circles:
             cb_x_min = cx - cr
@@ -44,9 +50,11 @@ class EnsembleDetector():
             if (intersectcount(self.lines, c_box) > 4):
                 if checknotduplicate(c_box, self.boxes, min_dist):
                     if self.boxes == None:
-                        self.boxes = self.boxes.append(c_box)
-                    else:
                         self.boxes = [c_box]
+                    else:
+                        self.boxes = self.boxes.append(c_box)
+
+        print(f"found : {self.boxes}")
         n_boards = len(self.boxes)
         if n_boards == 0: print(f"\nNo dartboards detected")
         elif n_boards == 1: print(f"\nDetected a dartboard!")
@@ -83,6 +91,8 @@ def checknotduplicate(a, boxes, min_dist):
     True if less than min_dist to another box already found.
     False if a new box.
     """
+    if boxes == None:
+        return True
     for box in boxes:
         if (boxesdist(a, box) < min_dist):
             return False

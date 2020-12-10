@@ -54,7 +54,7 @@ def score_f1(true_boxes, pred_boxes):
     """
     precision = score_precision(true_boxes, pred_boxes)
     recall = score_recall(true_boxes, pred_boxes)
-    f1 = 2*(recall * precision) / (recall + precision)
+    f1 = 2 * (recall * precision) / (recall + precision)
     return f1
 
 
@@ -62,7 +62,7 @@ def get_tps(true_boxes, pred_boxes):
     tps = 0
     for true_box in true_boxes:
         for pred_box in pred_boxes:
-            if not true_box == pred_box and score_iou(true_box, pred_box > 0.4):
+            if not true_box == pred_box and score_iou(true_box, pred_box) > 0.4:
                 tps += 1
                 break
     return tps
@@ -72,7 +72,7 @@ def get_fps(true_boxes, pred_boxes):
     fps = len(pred_boxes)
     for pred_box in pred_boxes:
         for true_box in true_boxes:
-            if not true_box == pred_box and score_iou(true_box, pred_box > 0.4):
+            if not true_box == pred_box and score_iou(true_box, pred_box) > 0.4:
                 fps -= 1
                 break
     return fps
@@ -81,10 +81,13 @@ def get_fps(true_boxes, pred_boxes):
 def get_fns(true_boxes, pred_boxes):
     fns = 0
     for true_box in true_boxes:
+        p = 0
         for pred_box in pred_boxes:
-            if not true_box == pred_box and score_iou(true_box, pred_box > 0.4):
+            if not true_box == pred_box and score_iou(true_box, pred_box) > 0.4:
                 break
-        fns += 1
+            p +=1
+        if (p == len(pred_boxes)):
+            fns += 1
     return fns
 
 # ignore metrics using true

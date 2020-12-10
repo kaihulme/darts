@@ -80,7 +80,7 @@ def ensemble_boxes(frame, name):
     """
     write(frame, name + "_ensemble_dartboards")
 
-def true_pred(frame, name):
+def true_pred_boxes(frame, name):
     """
     Write image with ground truth bounding boxes
     and predicted bounding boxes

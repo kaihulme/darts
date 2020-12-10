@@ -55,9 +55,13 @@ def ensemble_boxes(frame, ensemble_boxes, name):
     Draw boxes on frame
     """
     frame_copy = np.copy(frame)
-    print(ensemble_boxes)
+
+    print("ens boxes", ensemble_boxes)
+
     for (x, y, w, h) in ensemble_boxes:
-        print(x, y, w, h)
+
+        print("vals: ", x, y, w, h)
+
         frame_copy = cv.rectangle(frame_copy, (x,y), (x+w,y+h), (0,255,0), 2)
     write.ensemble_boxes(frame_copy, name)
 
@@ -67,6 +71,10 @@ def true_pred_boxes(frame, true_boxes, pred_boxes, name):
     Draw boxes on frame
     """
     frame_copy = np.copy(frame)
+
+    print("\ntboxes", true_boxes)
+    print("pboxes", pred_boxes, "\n")
+
     for (x,y,w,h) in true_boxes:
         frame_copy = cv.rectangle(frame_copy, (x,y), (x+w,y+h), (0,0,255), 2)
     for (x,y,w,h) in pred_boxes:

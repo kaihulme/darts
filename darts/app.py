@@ -120,9 +120,10 @@ def run():
     # TODO BlobDetector (ellipse)
 
     # output ground truth boxes with predicted boxes
-    draw.true_pred_boxes(frame, true_boxes, draw.ensemble_boxes, name)
+    draw.true_pred_boxes(frame, true_boxes, ensembledetector.boxes, name)
 
     # TODO calculate metrics
+    evaluateresults(true_boxes, ensembledetector.boxes)
 
 
     print("\nComplete!")
