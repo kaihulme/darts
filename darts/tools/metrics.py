@@ -4,7 +4,7 @@ def score_iou(a, b):
     """
     # inner box
     inner_x0 = max(a[0], a[0])
-    inner_y0 = max(b[1], b[1])
+    inner_y0 = max(a[1], b[1])
     inner_x1 = min(a[0] + a[2], b[0] + b[2])
     inner_y1 = min(a[1] + a[3], b[1] + b[3])
     # box areas
@@ -56,7 +56,7 @@ def score_f1(true_boxes, pred_boxes):
     recall = score_recall(true_boxes, pred_boxes)
     f1 = 2*(recall * precision) / (recall + precision)
     return f1
-    
+
 
 def get_tps(true_boxes, pred_boxes):
     tps = 0

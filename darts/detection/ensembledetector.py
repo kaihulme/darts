@@ -1,5 +1,7 @@
-from darts.io.draw import circles
 import numpy as np
+import darts.io.draw as draw
+import darts.tools.metrics as metrics
+from darts.io.draw import circles
 from darts.tools.utils import localmaxima
 
 class EnsembleDetector():
@@ -22,22 +24,27 @@ class EnsembleDetector():
             print(f"\nbox ({x_min}, {y_min}), ({x_max}, {y_max})")
 
             for circle in self.circles:
+
                 c_r = circle[0]
                 c_y = circle[1]
                 c_x = circle[2]
+                print(f"circle ({c_r}, {c_x}, {c_y})")
 
-                print(f"circle ({c_x}, {c_y})")
+                cb_x_min = c_x - c_r
+                cb_y_min = c_y - c_r
+                cb_x_max = c_x + c_r
+                cb_y_max = c_y + c_r
+                
+                c_box = [cb_x_min, cb_y_min, cb_x_max, cb_y_max]
+                print(f"c_box ({cb_x_min}, {cb_y_min}), ({cb_x_max}, {cb_y_max})")
 
-                print(c_x > x_min)
-                print(c_x < x_max)
-                print(c_y > y_min)
-                print(c_y < y_max)
+                draw.bb(frame, box, c_box, "testdart0")
+
+                iou = metrics.score_iou(box, c_box)
+                print("iou", iou)
 
                 if (c_x > x_min and c_x < x_max and c_y > y_min and c_y < y_max):
                     boards = np.append(boards, box)
-                    print("in box")
-                else:   
-                    print("not in box")
 
             for line in self.lines:
                 # print("\nline :", line)

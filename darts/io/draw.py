@@ -40,3 +40,26 @@ def dart_boxes(frame, face_boxes, name):
     for (x,y,w,h) in face_boxes:
         frame_copy = cv.rectangle(frame_copy, (x,y), (x+w,y+h), (0,255,0), 2)
     write.dart_boxes(frame_copy, name)
+
+
+###
+
+def bb(frame, ba, bb, name):
+    """
+    Draw boxes on frame
+    """
+    frame_copy = np.copy(frame)
+    
+    x=ba[0]
+    y=ba[1]
+    w=ba[2]
+    h=ba[3]
+    frame_copy = cv.rectangle(frame_copy, (x,y), (x+w,y+h), (0,255,0), 2)
+
+    x=bb[0]
+    y=bb[1]
+    w=bb[2]
+    h=bb[3]
+    frame_copy = cv.rectangle(frame_copy, (x,y), (x+w,y+h), (0,255,0), 2)
+    
+    write.face_boxes(frame_copy, name)

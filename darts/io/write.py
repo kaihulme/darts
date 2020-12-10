@@ -73,3 +73,21 @@ def clustered(frame, name):
     Write clustered image
     """
     write(frame, name + "_clustered")
+
+def canny(frame, name):
+    """
+    Write canny image
+    """
+    write(frame, name + "_canny")
+
+def clustered_canny(frame, name):
+    """
+    Write canny clustered image
+    """
+    write(frame, name + "_clustered_canny")
+
+def contour(frame, name):
+    """
+    Write countoured image
+    """
+    write(frame, name + "_countour")

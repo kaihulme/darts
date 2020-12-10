@@ -18,26 +18,31 @@ def run():
     """
     Face and dartboard detection using Viola Jones and Hough Transform methods.
     """
-    # thresholding params
+    # parameters for detection
+    gaussian_size = 3
     sobel_t_val = 150
-    houghlines_t_val = 25
+    houghlines_t_val = 30
     houghcircles_t_val = 30
     houghcircles_min_r = 50
     houghcircles_max_r = 200
     houghcircles_r_step = 5
-    lines_mindist = 10
+    lines_mindist = 20
     circles_mindist = 50
     all_spaces = False
+    kmeans = False
+    k = 2
 
     # load frame from arguments    
     frame_original, name = readfromargs(sys.argv)
+    frame = frame_original.copy()
 
-    # image segmentation
-    segmenter = Segmenter(k=2)
-    segmenter.segment(frame_original, name)
+    # image segmentation with KMeans
+    if kmeans:
+        segmenter = Segmenter(k=k)
+        frame = segmenter.segment(frame, name)
 
     # create greyscale image
-    frame = cv.cvtColor(frame_original, cv.COLOR_BGR2GRAY)
+    frame = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
     write.write(frame, name + "_gray")
 
     # viola jones face detection
@@ -54,7 +59,7 @@ def run():
 
     # gaussain blur
     print("\nApplying gaussian blur...")
-    gaussian = Gaussian(size=3)
+    gaussian = Gaussian(size=gaussian_size)
     frame = gaussian.blur(frame)
     write.gaussian(frame, name)
 
@@ -99,6 +104,8 @@ def run():
                                         circledetector)
     ensembledetector.detect(frame)
 
-    # TODO ADDITIONAL METHOD FOR ENSEMBLE
+    # TODO BlobDetector (ellipse)
+
+    # TODO Print metrics!
 
     print("\nComplete!\n")
