@@ -32,6 +32,8 @@ def getpath(name, loc, ext=".png"):
     Get file path given name and folder name.
     """
     dir = os.getcwd()
-    if (loc == "test") : return dir + "/darts/resources/images/test/" + name + ext
-    elif (loc == "out") : return dir + "/darts/out/" + name + ext
+    if (loc == "test") : 
+        return dir + "/darts/resources/images/test/" + name + ext
+    elif (loc == "out") : 
+        return dir + "/darts/out/" + name + ext
     else: return False

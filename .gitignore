@@ -175,4 +175,4 @@ cython_debug/
 *.app
 
 # Compilation and program outputs
-*/out
+*/out/*
