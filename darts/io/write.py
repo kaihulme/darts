@@ -1,7 +1,7 @@
 import cv2 as cv
 import numpy as np
 from darts.io.read import getpath
-from darts.manipulation.utils import normalise, radtodeg
+from darts.tools.utils import normalise, radtodeg
 
 def write(frame, name):
     """

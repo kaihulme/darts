@@ -1,7 +1,7 @@
 import math
 import numpy as np
 from tqdm import tqdm
-from darts.manipulation.utils import threshold
+from darts.tools.utils import threshold
 
 class HoughCircles():
     def __init__(self, min_r=40, max_r=100, r_step=5):

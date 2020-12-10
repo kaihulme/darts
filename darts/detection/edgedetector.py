@@ -1,7 +1,7 @@
 import math
 import numpy as np
 from darts.manipulation.convolution import Convolution, convolution
-from darts.manipulation.utils import threshold
+from darts.tools.utils import threshold
 
 from scipy.signal import convolve2d
 

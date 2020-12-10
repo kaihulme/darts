@@ -1,7 +1,7 @@
 import math
 import numpy as np
 from tqdm import tqdm
-from darts.manipulation.utils import threshold
+from darts.tools.utils import threshold
 
 class HoughLines():
     def __init__(self):

@@ -11,15 +11,16 @@ class ViolaJones:
         self._cascade_clf.load(cascade_path)
         self._frame_dir = cwd + "/darts/resources/images/test/"
         self._out_dir = cwd + "/darts/out/"
+        self.boxes = []
 
     def find_bounding_boxes(self, frame, name):
         """
         Find boxes in frame using cascade
         """ 
         frame_gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
-        boxes = self._cascade_clf.detectMultiScale(frame_gray,
-                                                   scaleFactor=1.1,
-                                                #    minNeighbors=3,
-                                                   minSize=(20, 20),
-                                                   maxSize=(200, 200))
-        return boxes
+        self.boxes = self._cascade_clf.detectMultiScale(frame_gray,
+                                                        scaleFactor=1.1,
+                                                        # minNeighbors=3,
+                                                        minSize=(20, 20),
+                                                        maxSize=(200, 200))
+        return self.boxes

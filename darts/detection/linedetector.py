@@ -1,5 +1,5 @@
 import numpy as np
-from darts.manipulation.utils import localmaxima
+from darts.tools.utils import localmaxima
 
 class LineDetector():
     def __init__(self, houghlines):

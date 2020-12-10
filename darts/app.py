@@ -11,6 +11,7 @@ from darts.detection.edgedetector import Sobel
 from darts.detection.violajones import ViolaJones
 from darts.detection.linedetector import LineDetector
 from darts.detection.circledetector import CircleDetector
+from darts.detection.ensembledetector import EnsembleDetector
 
 def run():
     """
@@ -87,8 +88,11 @@ def run():
     circledetector.detect(min_dist=circles_mindist)
     draw.circles(frame_original, circledetector.circles, name)
 
-    # TODO ENSEMBLE HOUGH LINES/CIRCLES
-    # TODO ENSEMBLE HOUGH / VJ
+    # TODO ENSEMBLE
+    ensembledetector = EnsembleDetector(dartboarddetector,
+                                        linedetector,
+                                        circledetector)
+    ensembledetector.detect(frame)
 
     # TODO ADDITIONAL METHOD FOR ENSEMBLE
 

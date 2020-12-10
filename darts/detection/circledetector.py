@@ -1,5 +1,5 @@
 import numpy as np
-from darts.manipulation.utils import localmaxima
+from darts.tools.utils import localmaxima
 
 class CircleDetector():
     def __init__(self, houghcircles):
