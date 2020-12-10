@@ -67,3 +67,9 @@ def dart_boxes(frame, name):
     Write image with Viola Jones dartboard detection bounding boxes
     """
     write(frame, name + "_vj_dartboards")
+
+def clustered(frame, name):
+    """
+    Write clustered image
+    """
+    write(frame, name + "_clustered")

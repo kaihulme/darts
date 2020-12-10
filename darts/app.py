@@ -5,6 +5,7 @@ import darts.io.draw as draw
 import darts.io.write as write
 from darts.io.read import readfromargs
 from darts.manipulation.gaussian import Gaussian
+from darts.transformation.segment import Segmenter
 from darts.transformation.houghlines import HoughLines
 from darts.transformation.houghcircles import HoughCircles
 from darts.detection.edgedetector import Sobel
@@ -30,6 +31,10 @@ def run():
 
     # load frame from arguments    
     frame_original, name = readfromargs(sys.argv)
+
+    # image segmentation
+    segmenter = Segmenter(k=2)
+    segmenter.segment(frame_original, name)
 
     # create greyscale image
     frame = cv.cvtColor(frame_original, cv.COLOR_BGR2GRAY)
