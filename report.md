@@ -7,18 +7,7 @@ Notes on implementation:
 
 ## 1. Viola-Jones object detector
 
-- explain object detection
-  - explain image classification
-  - explain face detection
-- explain viola jones
-  - boxes
-  - integral images
-  - cascade of classifiers
-  - AdaBoost
-- re-implemented face.cpp as a python module for integration with my project
 - ground truth and visualisation
-  - manually annotate each of the test images
-    - generate ground truth bounding box (x,y,w,h)
   - test face.cpp on images 4, 5, 13, 14, 15
     - draw true red boxes
     - and generated green boxes
@@ -59,19 +48,14 @@ Notes on implementation:
 
 ## 3. Integration with shape detectors
 
-- shape detection
-- edge detection
-  - show gradient image (mag, dir)
+- show gradient image (mag, dir)
 - hough transform
-  - hough circles
-  - hough lines
     - for 2 best images
       - one front on, multi board (14)
       - one side on (which works when adding lines)
     - show hough circles+lines spaces
       - summed circles and some individual
       - show circles and lines detected
-  - explain optimisations for small gradient range
 - combine with output of viola jones
   - show output of dart detection
     - ground truth in red
@@ -82,19 +66,18 @@ Notes on implementation:
   - detection pipeline
     - describe rationale behind method
     - reasoning behind combinations
-    - describe extensions to method
 
 ## 4. Improving my detector
-
 - developing the detector further using additional opencv functionality
-  - describe the method
-  - segmenting?
-  - ?
+  - kmeans colour segmenting pre detection
+- explain optimisations for small gradient range
+- speed optimisations
 - visualise results
   - display an image that is detected well
   - one that is bad with VJ
   - better with VJ+HT
   - and very well done with this additional method
+  - show new hough spaces (less noisy)
 - evaluate final model performance
   - FPR, F1, precision, recall, sensitivity & specificity
   - improvement percentages over pt2 and pt3.

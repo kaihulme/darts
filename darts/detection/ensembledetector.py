@@ -1,24 +1,33 @@
 import numpy as np
-import darts.io.draw as draw
 import darts.tools.metrics as metrics
-from darts.io.draw import circles
-from darts.tools.utils import localmaxima
 
 class EnsembleDetector():
     def __init__(self, violajones, linedetector, circledetector):
         self.vj_boxes = violajones.boxes
         self.lines = linedetector.lines
         self.circles = circledetector.circles
-        self.boxes = None
+        self.boxes = np.array([])
 
     def detect(self, frame, min_dist=20):     
+        # for each detected hough circle
+        for (cr, cy, cx) in self.circles:
+            cb_x_min = cx - cr
+            cb_y_min = cy - cr
+            c_box = np.array([cb_x_min, cb_y_min, 2*cr, 2*cr])
+            # if there are enough line intersections with hough circle assume dartboard
+            if (intersectcount(self.lines, c_box) > 4):
+                if checknotduplicate(c_box, self.boxes, min_dist):
+                    if (self.boxes.size == 0):
+                        self.boxes =  np.asarray([c_box])
+                    else:
+                        self.boxes = np.vstack((self.boxes, c_box))
         # for each cascade dartboard box
         for d_box in self.vj_boxes:
             # for each circle
             for (cr, cy, cx) in self.circles:
                 cb_x_min = cx - cr
                 cb_y_min = cy - cr
-                c_box = (cb_x_min, cb_y_min, 2*cr, 2*cr)
+                c_box = np.array([cb_x_min, cb_y_min, 2*cr, 2*cr])
                 iou = metrics.score_iou(d_box, c_box)
                 # if circle bounding box IOU with cascade box > 0.5 assume dartboard
                 if (iou > 0.4):
@@ -27,38 +36,19 @@ class EnsembleDetector():
                     e1 = int((d_box[1] + c_box[1]) / 2)
                     e2 = int((d_box[2] + c_box[2]) / 2)
                     e3 = int((d_box[3] + c_box[3]) / 2)
-                    e_box = [e0, e1, e2, e3]
-
+                    e_box = np.array([e0, e1, e2, e3])
                     if checknotduplicate(e_box, self.boxes, min_dist):
-                        if self.boxes == None:
-                            self.boxes = [e_box]
-                        else: 
-                            self.boxes = self.boxes.append(e_box)
+                        if (self.boxes.size == 0):
+                            self.boxes = np.asarray([e_box])
+                        else:
+                            self.boxes = np.vstack((self.boxes, e_box))
             # if there are enough line intersections with cascade box assume circle
-            if (intersectcount(self.lines, d_box) > 4):
+            if (intersectcount(self.lines, d_box) == 0):
                 if checknotduplicate(d_box, self.boxes, min_dist):
-                    if self.boxes == None:
-                        self.boxes = [d_box]
+                    if (self.boxes.size == 0):
+                        self.boxes = np.asarray([d_box])
                     else:
-                        self.boxes = self.boxes.append(d_box)
-        # for each detected hough circle
-        for (cr, cy, cx) in self.circles:
-            cb_x_min = cx - cr
-            cb_y_min = cy - cr
-            c_box = (cb_x_min, cb_y_min, 2*cr, 2*cr)
-            # if there are enough line intersections with hough circle assume dartboard
-            if (intersectcount(self.lines, c_box) > 4):
-                if checknotduplicate(c_box, self.boxes, min_dist):
-                    if self.boxes == None:
-                        self.boxes = [c_box]
-                    else:
-                        self.boxes = self.boxes.append(c_box)
-
-        print(f"found : {self.boxes}")
-        n_boards = len(self.boxes)
-        if n_boards == 0: print(f"\nNo dartboards detected")
-        elif n_boards == 1: print(f"\nDetected a dartboard!")
-        else: print(f"\nDetected {n_boards} dartboards!")
+                        self.boxes = np.vstack((self.boxes, d_box))
 
 
 def intersectcount(lines, box):
@@ -91,7 +81,7 @@ def checknotduplicate(a, boxes, min_dist):
     True if less than min_dist to another box already found.
     False if a new box.
     """
-    if boxes == None:
+    if (boxes.size == 0):
         return True
     for box in boxes:
         if (boxesdist(a, box) < min_dist):

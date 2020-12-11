@@ -1,4 +1,3 @@
-import os
 import sys
 import cv2 as cv
 import darts.io.draw as draw
@@ -13,7 +12,7 @@ from darts.detection.violajones import ViolaJones
 from darts.detection.linedetector import LineDetector
 from darts.detection.circledetector import CircleDetector
 from darts.detection.ensembledetector import EnsembleDetector
-from darts.tests.groundtruths import testrueboxes
+from darts.tests.groundtruths import gettruedartboards, gettruefaces
 from darts.tests.evaluate import evaluateresults
 
 def run():
@@ -22,11 +21,11 @@ def run():
     """
     # parameters for detection
     gaussian_size = 3
-    sobel_t_val = 100
+    sobel_t_val = 150
     houghlines_t_val = 30
     houghcircles_t_val = 30
-    houghcircles_min_r = 20
-    houghcircles_max_r = 150
+    houghcircles_min_r = 40
+    houghcircles_max_r = 300
     houghcircles_r_step = 5
     lines_mindist = 20
     circles_mindist = 100
@@ -38,17 +37,10 @@ def run():
     # load frame from arguments    
     frame_original, name = readfromargs(sys.argv)
     frame = frame_original.copy()
-    print(f"\nDetecting dartboards in {name}...")
-
-    # get ground truth boxes for test image
-    true_boxes = testrueboxes(name)
-
-    print(true_boxes)
-
-    draw.true_boxes(frame, true_boxes, name)
+    print(f"[0/9]: Loading frame '{name}'...")
 
     # gaussain blur
-    print("\n[1/9]: Applying gaussian blur...")
+    print("[1/9]: Applying gaussian blur...")
     gaussian = Gaussian(size=gaussian_size)
     frame = gaussian.blur(frame)
     write.gaussian(frame, name)
@@ -65,14 +57,14 @@ def run():
     # viola jones face detection
     print("[2/9]: Detecting faces with Viola Jones...")
     facedetector = ViolaJones("frontalface")
-    face_boxes = facedetector.find_bounding_boxes(frame_original, name)
-    draw.face_boxes(frame_original, face_boxes, name)
+    vj_face_boxes = facedetector.find_bounding_boxes(frame_original, name)
+    draw.face_boxes(frame_original, vj_face_boxes, name)
 
     # viola jones dartboard detection
     print("[3/9]: Detecting dartboards with Viola Jones...")
     dartboarddetector = ViolaJones("dartboard")  
-    dartboard_boxes = dartboarddetector.find_bounding_boxes(frame_original, name)
-    draw.dart_boxes(frame_original, dartboard_boxes, name)
+    vj_dartboard_boxes = dartboarddetector.find_bounding_boxes(frame_original, name)
+    draw.dart_boxes(frame_original, vj_dartboard_boxes, name)
 
     # sobel edge detectionedges
     print("[4/9]: Detecting edges with Sobel edge detector...")
@@ -117,13 +109,23 @@ def run():
     ensembledetector.detect(frame, ensemble_mindist)
     draw.ensemble_boxes(frame_original, ensembledetector.boxes, name)
 
-    # TODO BlobDetector (ellipse)
+    # faces
+    print("[\n1/3]: INFO: Viola Jones face detection analysis")
+    true_faces = gettruefaces(name)
+    draw.true_face_boxes(frame_original, true_faces, name)
+    draw.true_pred_face_boxes(frame_original, true_faces, vj_face_boxes, name)
+    evaluateresults(true_faces, vj_face_boxes)
 
-    # output ground truth boxes with predicted boxes
-    draw.true_pred_boxes(frame, true_boxes, ensembledetector.boxes, name)
+    # darts
+    print("[2/3]: INFO: Viola Jones dartboard detection analysis")
+    true_darts = gettruedartboards(name)
+    draw.true_dart_boxes(frame_original, true_darts, name)
+    draw.true_pred_dart_boxes(frame_original, true_darts, vj_dartboard_boxes, name)
+    evaluateresults(true_darts, vj_dartboard_boxes)
 
-    # TODO calculate metrics
-    evaluateresults(true_boxes, ensembledetector.boxes)
+    # draw predictions with ground truths and output metrics
+    print("[3/3]: INFO: Ensemble dartboard detection analysis")
+    draw.true_pred_ensemble_boxes(frame_original, true_darts, ensembledetector.boxes, name)
+    evaluateresults(true_darts, ensembledetector.boxes)
 
-
-    print("\nComplete!")
+    print("Done.\n")

@@ -14,32 +14,26 @@ class HoughCircles():
         self.hough_space_sum = []
         self.t_hough_space_sum = []
 
-    # TRY AND INCREMENT ALL HOUGHSPACE AT ONCE (np.add.at for 3D array)
     def transform(self, mag, dir, dt_size=2):
         """
         Apply Hough circles transformation to frame for a range of radii
         """
-
         # create r houghspaces for each radii r
         rows, cols = mag.shape
         self.hough_space = np.zeros((self.r_size, rows, cols))
-
         # precompute sin(theta), cos(theta) for all theta
         max_theta = 180
         thetas = np.arange(-max_theta, max_theta) * math.pi / 180
         cossin = np.column_stack((np.sin(thetas), np.cos(thetas)))
-
         # get positions of non-zero magnitude pixels and set initial radius
         points = np.column_stack(np.nonzero(mag))
         radius = self.min_r
-        
         # progress bar
         pbar = tqdm(total=((len(points)) * (self.r_size)))
         for r in range(self.r_size):
             for (y, x) in points:
                 dir_theta = np.rad2deg(dir[y][x]).astype('int')
                 dt = (dir_theta - dt_size + max_theta, dir_theta + dt_size + max_theta)
-
                 # compute circle points (y0, x0): y0=r-ysin(theta), x0=x-rcos(theta)
                 c_points = np.column_stack((y - cossin[dt[0]:dt[1], 0] * radius, 
                                             x - cossin[dt[0]:dt[1], 1] * radius)).astype('int')
@@ -49,7 +43,7 @@ class HoughCircles():
                                             & (c_points[:, 1] < cols))]
                 # increment circle points in frame
                 np.add.at(self.hough_space[r], (c_points[:, 0], c_points[:, 1]), 1)
-                # update progress bar
+                # # update progress bar
                 pbar.update(1)
             # increment radius
             radius += self.r_step

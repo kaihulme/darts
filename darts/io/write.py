@@ -1,7 +1,7 @@
 import cv2 as cv
 import numpy as np
 from darts.io.read import getpath
-from darts.tools.utils import normalise, radtodeg
+from darts.tools.utils import normalise
 
 def write(frame, name):
     """
@@ -56,9 +56,15 @@ def circles(frame, name):
     """
     write(frame, name + "_circles")
 
-def true_boxes(frame, name):
+def true_face_boxes(frame, name):
     """
-    Write image with ground truth bounding boxes
+    Write image with ground truth bounding boxes for faces
+    """
+    write(frame, name + "_true_faces")
+
+def true_dart_boxes(frame, name):
+    """
+    Write image with ground truth bounding boxes for dartboards
     """
     write(frame, name + "_true_dartboards")
 
@@ -80,12 +86,26 @@ def ensemble_boxes(frame, name):
     """
     write(frame, name + "_ensemble_dartboards")
 
-def true_pred_boxes(frame, name):
+def true_pred_face_boxes(frame, name):
     """
     Write image with ground truth bounding boxes
-    and predicted bounding boxes
+    and predicted bounding boxes for vj faces
     """
-    write(frame, name + "_true_pred_dartboards")
+    write(frame, name + "_true_pred_vj_face")
+
+def true_pred_dart_boxes(frame, name):
+    """
+    Write image with ground truth bounding boxes
+    and predicted bounding boxes for vj dartboards
+    """
+    write(frame, name + "_true_pred_vj_dartboards")
+
+def true_pred_ensemble_boxes(frame, name):
+    """
+    Write image with ground truth bounding boxes
+    and predicted bounding boxes for ensemble
+    """
+    write(frame, name + "_true_pred_ensemble_dartboards")
 
 def clustered(frame, name):
     """
