@@ -1,5 +1,7 @@
+import os
 import cv2 as cv
 import numpy as np
+import pandas as pd
 from darts.io.read import getpath
 from darts.tools.utils import normalise
 
@@ -130,3 +132,27 @@ def contour(frame, name):
     Write countoured image
     """
     write(frame, name + "_countour")
+
+def evaluation_results(results, name):
+    """
+    Write evaluation results to CSV file
+    """
+
+    results_df = pd.DataFrame(columns=[
+        "test",
+        "targets",
+        "detections",
+        "tp_count",
+        "fp_count",
+        "fn_count",
+        "precision",
+        "recall",
+        "f1_score",
+        "avg_iou",
+    ]).set_index("test")
+
+    for (result, test) in results:
+        results_df.loc[test] = result
+
+    out_path = os.getcwd() + "/darts/out/results/{}_results.csv".format(name)
+    results_df.to_csv(out_path)

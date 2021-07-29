@@ -130,22 +130,30 @@ def run():
     print("\n[0/3]: EVALUATING.")
 
     # faces
-    print("\n[1/3]: INFO: Viola Jones face detection analysis")
+    print("\n[1/3]: Viola Jones face detection analysis")
     true_faces = gettruefaces(name)
     draw.true_face_boxes(frame_original, true_faces, name)
     draw.true_pred_face_boxes(frame_original, true_faces, vj_face_boxes, name)
-    evaluateresults(true_faces, vj_face_boxes)
+    vj_faces_results = evaluateresults(true_faces, vj_face_boxes)#, name, "vj_faces")
 
     # darts
-    print("\n[2/3]: INFO: Viola Jones dartboard detection analysis")
+    print("\n[2/3]: Viola Jones dartboard detection analysis")
     true_darts = gettruedartboards(name)
     draw.true_dart_boxes(frame_original, true_darts, name)
     draw.true_pred_dart_boxes(frame_original, true_darts, vj_dartboard_boxes, name)
-    evaluateresults(true_darts, vj_dartboard_boxes)
+    vj_darts_results = evaluateresults(true_darts, vj_dartboard_boxes)#, name, "vj_darts")
 
     # draw predictions with ground truths and output metrics
-    print("\n[3/3]: INFO: Ensemble dartboard detection analysis")
+    print("\n[3/3]: Ensemble dartboard detection analysis")
     draw.true_pred_ensemble_boxes(frame_original, true_darts, ensembledetector.boxes, name)
-    evaluateresults(true_darts, ensembledetector.boxes)
+    ensemble_results = evaluateresults(true_darts, ensembledetector.boxes)#, name, "ensemble")
+
+    results = [
+        (vj_faces_results, "vj_faces"),
+        (vj_darts_results, "vj_darts_results"),
+        (ensemble_results, "ensemble")
+    ]
+
+    write.evaluation_results(results, name)
 
     print("Done.\n\nComplete!")
