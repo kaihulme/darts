@@ -27,8 +27,8 @@ def gettruedartboards(name):
     elif (name == "dart9"):
         return np.asarray([[170, 13, 300, 300]])
     elif (name == "dart10"):
-        return np.asarray([[78, 91, 117, 134]
-	                       [578, 118, 64, 101]
+        return np.asarray([[78, 91, 117, 134],
+	                       [578, 118, 64, 101],
 	                       [913, 142, 40, 79]])
     elif (name == "dart11"):
         return np.asarray([[169, 93, 71, 96]])
@@ -38,7 +38,7 @@ def gettruedartboards(name):
         return np.asarray([[257, 103, 161, 164]])
     elif (name == "dart14"):
         return np.asarray([[103, 84, 157, 159],
-	                       [971, 84, 154, 241]])
+	                       [971, 84, 154, 150]])
     elif (name == "dart15"):
         return np.asarray([[129, 35, 171, 173]])
     return False

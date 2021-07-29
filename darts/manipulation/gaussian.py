@@ -15,5 +15,5 @@ class Gaussian():
         """
         # frame = convolution(frame, self.kX, 0, self.r)
         # frame = convolution(frame, self.kY, self.r, 0)
-        frame = cv.GaussianBlur(frame, (self.size, self.size), 0) # faster
+        frame = cv.GaussianBlur(frame, (self.size, self.size), 0) # faster than above
         return frame

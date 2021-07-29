@@ -27,6 +27,8 @@ def avg_iou(true_boxes, pred_boxes):
                 max = iou
         if max > 0:
             total += max
+    if len(true_boxes) == 0:
+        return 0
     return total / len(true_boxes)
         
 
