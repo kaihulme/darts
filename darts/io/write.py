@@ -135,24 +135,27 @@ def contour(frame, name):
 
 def evaluation_results(results, name):
     """
-    Write evaluation results to CSV file
+    Update evaluation results to CSV file
     """
-
-    results_df = pd.DataFrame(columns=[
-        "test",
-        "targets",
-        "detections",
-        "tp_count",
-        "fp_count",
-        "fn_count",
-        "precision",
-        "recall",
-        "f1_score",
-        "avg_iou",
-    ]).set_index("test")
-
+    csv_dir = os.path.join(os.getcwd(), "darts/out/results")
     for (result, test) in results:
-        results_df.loc[test] = result
+        csv_path = os.path.join(csv_dir, "{}_results.csv".format(test))
+        if os.path.exists(csv_path):
+            results_df = pd.read_csv(csv_path).set_index("image")
+        else: # create new dataframe if one doesn't exist
+            results_df = pd.DataFrame(columns=[
+                "image",
+                "targets", "detections",
+                "tp_count", "fp_count", "fn_count",
+                "precision", "recall", "f1_score", "avg_iou",
+            ]).set_index("image")
+            results_df.loc["avg"] = 0
+        results_df.loc[name] = result
 
-    out_path = os.getcwd() + "/darts/out/results/{}_results.csv".format(name)
-    results_df.to_csv(out_path)
+        sums = ["precision", "recall", "f1_score", "avg_iou"]
+        avgs = ["targets", "detections", "tp_count", "fp_count", "fn_count"]
+
+        results_df.loc["avg"][avgs] = results_df.drop("avg", axis=0, inplace=False)[avgs].mean()
+        results_df.loc["avg"][sums] = results_df.drop("avg", axis=0, inplace=False)[sums].sum()
+
+        results_df.to_csv(csv_path)

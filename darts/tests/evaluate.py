@@ -30,39 +30,6 @@ def evaluateresults(groundtruths, predictions): #, name, test):
     print(f"| Avg. IOU        : {avg_iou:.2f} |")
     print("---------------------")
 
-    # write to csv
-    # results_df = pd.DataFrame(
-        # [[
-        #     n_groundtruths, 
-        #     n_predictions, 
-        #     tps, 
-        #     fps, 
-        #     fns, 
-        #     precision, 
-        #     recall, 
-        #     f1, 
-        #     avg_iou,
-        # ]], columns=[
-        #     "targets",
-        #     "detections",
-        #     "tp_count",
-        #     "fp_count",
-        #     "fn_count",
-        #     "precision",
-        #     "recall",
-        #     "f1_score",
-        #     "avg_iou",
-        # ]
-    # )
-
-    # out_name = "/darts/out/results/{}_{}_results.csv".format(name, test)
-    # out_path = os.getcwd() + out_name
-
-    # print("\n", out_name)
-    # print(out_path, "\n")
-
-    # results_df.to_csv(out_path)
-
     return [
             n_groundtruths, 
             n_predictions, 
@@ -73,14 +40,4 @@ def evaluateresults(groundtruths, predictions): #, name, test):
             recall, 
             f1, 
             avg_iou,
-        ]#, [
-        #     "targets",
-        #     "detections",
-        #     "tp_count",
-        #     "fp_count",
-        #     "fn_count",
-        #     "precision",
-        #     "recall",
-        #     "f1_score",
-        #     "avg_iou",
-        # ]
+        ]
