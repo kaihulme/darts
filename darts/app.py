@@ -1,3 +1,4 @@
+import os
 import sys
 import cv2 as cv
 import darts.io.draw as draw
@@ -19,20 +20,32 @@ def run():
     """
     Face and dartboard detection using Viola Jones and Hough Transform methods.
     """
-    # parameters for detection
-    gaussian_size = 3
-    sobel_t_val = 130
-    houghlines_t_val = 30
-    houghcircles_t_val = 30
-    houghcircles_min_r = 40
-    houghcircles_max_r = 300
-    houghcircles_r_step = 5
-    lines_mindist = 20
-    circles_mindist = 100
-    ensemble_mindist = 100
-    all_spaces = True
-    kmeans = True
-    k = 2
+
+    # clear outputs
+    if sys.argv[1] == "clean":
+        for name in ["images", "results"]:
+            out_dir = os.path.join(os.getcwd(), "darts/out", name)
+            for filename in os.listdir(out_dir):
+                os.remove(os.path.join(out_dir, filename))
+        return
+
+    # parameters for detection #
+    gaussian_size = 3 # size of gaussian kernel
+    sobel_t_val = 130 # threshold value for sobel edge detection
+    houghlines_t_val = 30 # threshold value for hough lines
+    houghcircles_t_val = 30 # threshold value for hough circles
+
+    houghcircles_min_r = 10 # minimum hough circle radius
+    houghcircles_max_r = 200 # maximum hough circle radius
+    houghcircles_r_step = 5 # skip r radii when drawing circles in hough space
+
+    lines_mindist = 20 
+    circles_mindist = 100 # minimum distance between circle detections
+    ensemble_mindist = 100 # minimum distance between dartboard detections in ensemble method
+
+    all_spaces = False # draw all hough spaces or only sum
+    kmeans = False # apply kmeans clustering
+    k = 2 # number of kmeans clusters
 
     ### LOADING and PREPROCESSING STEPS ###
 
