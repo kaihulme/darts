@@ -17,145 +17,76 @@ def score_iou(a, b):
     iou = inner_area / (a_area + b_area - inner_area)
     return iou
 
-def avg_iou(true_boxes, pred_boxes):
-    total = 0
-    for true_box in true_boxes:
-        max = 0
-        for pred_box in pred_boxes:
-            iou = score_iou(true_box, pred_box)
-            if (iou > max):
-                max = iou
-        if max > 0:
-            total += max
-    if len(true_boxes) == 0:
+def avg_iou(ious):
+    if len(ious) == 0:
         return 0
-    return total / len(true_boxes)
-        
+    return np.asarray(ious).mean()
 
-def score_tpr(true_boxes, pred_boxes):
+# def avg_iou(true_boxes, pred_boxes):
+#     total = 0
+#     for true_box in true_boxes:
+#         max = 0
+#         for pred_box in pred_boxes:
+#             iou = score_iou(true_box, pred_box)
+#             if (iou > max):
+#                 max = iou
+#         if max > 0:
+#             total += max
+#     if len(true_boxes) == 0:
+#         return 0
+#     return total / len(true_boxes)
+
+def get_tpfpfn(true_boxes, pred_boxes):
+    """
+    Get TPs, FPs and FNs from bounding boxes.
+    """
+    t_iou = 0.25 # iou threshold for detection
+    ious = [] # list of IOUs for TPs
     tps = 0
-    fns = 0
-    for true_box in true_boxes:
-        for pred_box in pred_boxes:
-            if notsamebox(true_box, pred_box) and score_iou(true_box, pred_box) > 0.25:
+    true_to_assign = true_boxes.tolist()
+    pred_to_assign = pred_boxes.tolist()
+    for tb in true_boxes.tolist():
+        if tb in true_to_assign:
+            max = []
+            max_iou = 0
+            for pb in pred_boxes.tolist():
+                if pb in pred_to_assign:
+                    iou = score_iou(tb, pb)
+                    if iou > max_iou:
+                        max = pb
+                        max_iou = iou
+            if max_iou > t_iou:
                 tps += 1
-                break
-            fns += 1
-    if (tps + fns) == 0:
-        return 0
-    tpr = tps / (tps + fns)
-    return tpr
+                true_to_assign.remove(tb)
+                pred_to_assign.remove(max)
+                ious.append(max_iou)
+    fns = len(true_to_assign)
+    fps = len(pred_to_assign)
+    return tps, fps, fns, ious
 
 
-def score_precision(true_boxes, pred_boxes):
+def score_precision(tps, fps):
     """
     Precision = TP/(TP+FP)
     """
-    tps = get_tps(true_boxes, pred_boxes)
-    fps = get_fps(true_boxes, pred_boxes)
     if (tps + fps) == 0:
         return 0
-    precision = tps / (tps + fps)
-    return precision
+    return tps / (tps + fps)
 
 
-def score_recall(true_boxes, pred_boxes):
+def score_recall(tps, fns):
     """
     Recall = TP/(TP+FN)
     """
-    tps = get_tps(true_boxes, pred_boxes)
-    fns = get_fns(true_boxes, pred_boxes)
     if (tps + fns) == 0:
         return 0
-    recall = tps / (tps + fns)
-    return recall
+    return tps / (tps + fns)
 
 
-def score_f1(true_boxes, pred_boxes):
+def score_f1(precision, recall):
     """
-    F1 = 2 * (Sensitivity*Precision) / (Sensitivity+Precision)
+    F1 = 2 * (precision * recall) / (precision + recall)
     """
-    precision = score_precision(true_boxes, pred_boxes)
-    recall = score_recall(true_boxes, pred_boxes)
     if (recall + precision) == 0:
         return 0
-    f1 = 2 * (recall * precision) / (recall + precision)
-    return f1
-
-
-def get_tps(true_boxes, pred_boxes):
-    tps = 0
-    for true_box in true_boxes:
-        for pred_box in pred_boxes:
-            if notsamebox(true_box, pred_box) and score_iou(true_box, pred_box) > 0.25:
-                tps += 1
-                break
-    return tps
-
-
-def get_fps(true_boxes, pred_boxes):
-    fps = len(pred_boxes)
-    for pred_box in pred_boxes:
-        for true_box in true_boxes:
-            if notsamebox(true_box, pred_box) and score_iou(true_box, pred_box) > 0.25:
-                fps -= 1
-                break
-    return fps
-
-
-def get_fns(true_boxes, pred_boxes):
-    fns = 0
-    for true_box in true_boxes:
-        p = 0
-        for pred_box in pred_boxes:
-            if notsamebox(true_box, pred_box) and score_iou(true_box, pred_box) > 0.25:
-                break
-            p +=1
-        if (p == len(pred_boxes)):
-            fns += 1
-    return fns
-
-def notsamebox(a, b):
-    return not np.array_equal(a, b)
-
-    # if (a[0] == b[0] and a[1] == b[1] and a[2] == b[2] and a[3] == b[3]):
-        # return True
-    # return False
-
-# ignore metrics using true
-# negative as hard to define
-# for object detection tasks.
-
-# def score_fpr(true_boxes, pred_boxes):
-#     fps = 0
-#     tns = 0
-#     for pred_box in pred_boxes:
-#         p = 0
-#         for true_box in true_boxes:
-#             if (score_iou(true_box, pred_box) > 0.5):
-#                 tps += 1
-#                 break
-#         if (p == 0):
-#             fps += 1
-#     tpr = fps / (fps + tns)
-#     return tpr
-
-# def get_tns(true_boxes, pred_boxes):
-    # return tns
-
-# def score_accuracy(a, b):
-#     """
-#     Accuracy = (TP+TN)/(TP+FP+FN+TN)
-#     """
-#     tp = score_tp
-#     tn = score_tn
-#     fp = score_fp
-#     fn = score_fn
-#     accuracy = (tp + tn) / (tp + fp + fn + tn)
-#     return accuracy
-
-# def specificity(a, b):
-#     """
-#     Specificity = TN/(TN+FP)
-#     """
-#     return specificity
+    return 2 * (precision * recall) / (precision + recall)

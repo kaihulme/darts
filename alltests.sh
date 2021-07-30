@@ -17,4 +17,4 @@ python -m darts dart13.jpg
 python -m darts dart14.jpg
 python -m darts dart15.jpg
 
-printf "[INFO]: Testing complete (see /darts/out)\n\n"
+printf "\n[INFO]: Testing complete! (see /darts/out)\n\n"

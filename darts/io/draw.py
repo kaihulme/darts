@@ -96,15 +96,9 @@ def true_pred_dart_boxes(frame, true_boxes, pred_boxes, name):
     frame_copy = np.copy(frame)
     for box in true_boxes:
         x, y, w, h = box[0], box[1], box[2], box[3]
-
-        print(f"true dart box: [{x}, {y}, {w}, {h}]")
-
         frame_copy = cv.rectangle(frame_copy, (x,y), (x+w,y+h), (0,0,255), 2)
     for (x, y, w, h) in pred_boxes:
         frame_copy = cv.rectangle(frame_copy, (x,y), (x+w,y+h), (0,255,0), 2)
-
-        print(f"pred dart box: [{x}, {y}, {w}, {h}]")
-
     write.true_pred_dart_boxes(frame_copy, name)
 
 
@@ -115,13 +109,7 @@ def true_pred_ensemble_boxes(frame, true_boxes, pred_boxes, name):
     frame_copy = np.copy(frame)
     for box in true_boxes:
         x, y, w, h = box[0], box[1], box[2], box[3]
-
-        print(f"true ensemble box: [{x}, {y}, {w}, {h}]")
-
         frame_copy = cv.rectangle(frame_copy, (x,y), (x+w,y+h), (0,0,255), 2)
     for (x, y, w, h) in pred_boxes:
         frame_copy = cv.rectangle(frame_copy, (x,y), (x+w,y+h), (0,255,0), 2)
-
-        print(f"pred ensemble box: [{x}, {y}, {w}, {h}]")
-
     write.true_pred_ensemble_boxes(frame_copy, name)

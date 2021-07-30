@@ -149,13 +149,12 @@ def evaluation_results(results, name):
                 "tp_count", "fp_count", "fn_count",
                 "precision", "recall", "f1_score", "avg_iou",
             ]).set_index("image")
-            results_df.loc["avg"] = 0
+            results_df.loc["total"] = 0
         results_df.loc[name] = result
-
-        sums = ["precision", "recall", "f1_score", "avg_iou"]
-        avgs = ["targets", "detections", "tp_count", "fp_count", "fn_count"]
-
-        results_df.loc["avg"][avgs] = results_df.drop("avg", axis=0, inplace=False)[avgs].mean()
-        results_df.loc["avg"][sums] = results_df.drop("avg", axis=0, inplace=False)[sums].sum()
-
+        # calculate mean of metrics and sum of counts for total row
+        avgs = ["precision", "recall", "f1_score", "avg_iou"]
+        sums = ["targets", "detections", "tp_count", "fp_count", "fn_count"]
+        results_df.loc["total"][avgs] = results_df.drop("total", axis=0, inplace=False)[avgs].mean()
+        results_df.loc["total"][sums] = results_df.drop("total", axis=0, inplace=False)[sums].sum()
+        # write updated results
         results_df.to_csv(csv_path)
