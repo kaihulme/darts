@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 from darts.io.read import getpath
 from darts.tools.utils import normalise
+from darts.tools.metrics import score_precision, score_recall, score_f1
 
 def write(frame, name):
     """
@@ -147,14 +148,20 @@ def evaluation_results(results, name):
                 "image",
                 "targets", "detections",
                 "tp_count", "fp_count", "fn_count",
-                "precision", "recall", "f1_score", "avg_iou",
+                "precision", "recall", "f1_score", "avg_detect_iou", "avg_iou",
             ]).set_index("image")
             results_df.loc["total"] = 0
         results_df.loc[name] = result
-        # calculate mean of metrics and sum of counts for total row
-        avgs = ["precision", "recall", "f1_score", "avg_iou"]
+
+        # update total counts
         sums = ["targets", "detections", "tp_count", "fp_count", "fn_count"]
-        results_df.loc["total"][avgs] = results_df.drop("total", axis=0, inplace=False)[avgs].mean()
         results_df.loc["total"][sums] = results_df.drop("total", axis=0, inplace=False)[sums].sum()
+        
+        # update average metrics
+        avgs = ["precision", "recall", "f1_score"]
+        results_df.loc["total"][avgs] = results_df.drop("total", axis=0, inplace=False)[avgs].mean()
+        results_df.loc["total"]["avg_detect_iou"] = results_df["avg_detect_iou"].drop("total", axis=0, inplace=False)[results_df["avg_detect_iou"]>0].mean()
+        results_df.loc["total"]["avg_iou"] = results_df["avg_iou"].drop("total", axis=0, inplace=False)[results_df["avg_iou"]>=0].mean()
+        
         # write updated results
         results_df.to_csv(csv_path)

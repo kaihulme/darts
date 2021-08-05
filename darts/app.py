@@ -66,8 +66,8 @@ def run():
     write.gaussian(frame, name)
 
     # image segmentation with KMeans
-    print(f"[3/{preprocessing_steps}]: Applying KMeans clustering...")
     if kmeans:
+        print(f"[3/{preprocessing_steps}]: Applying KMeans clustering...")
         segmenter = Segmenter(k=k)
         frame = segmenter.segment(frame, name)
 
@@ -161,12 +161,12 @@ def run():
     draw.true_pred_ensemble_boxes(frame_original, true_darts, ensembledetector.boxes, name)
     ensemble_results = evaluateresults(true_darts, ensembledetector.boxes)#, name, "ensemble")
 
+    # write results to csv files
     results = [
         (vj_faces_results, "vj_faces"),
         (vj_darts_results, "vj_darts_results"),
         (ensemble_results, "ensemble")
     ]
-
     write.evaluation_results(results, name)
 
     print("Done.\n\nComplete!")

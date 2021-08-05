@@ -1,5 +1,6 @@
 import os
 import cv2 as cv
+import numpy as np
 
 class ViolaJones:
     def __init__(self, cascade_type):
@@ -23,4 +24,5 @@ class ViolaJones:
                                                         # minNeighbors=3,
                                                         minSize=(20, 20),
                                                         maxSize=(200, 200))
+        self.boxes = np.asarray(self.boxes) # fix for empty returning tuple not array
         return self.boxes

@@ -1,40 +1,84 @@
 import numpy as np
 
+def overlaps(a_0x, a_0y, a_1x, a_1y, b_0x, b_0y, b_1x, b_1y):
+    """
+    Check if boxes overlap.
+    """
+    # no depth or width cannot overlap
+    if a_0x == a_1x or a_0y == a_1y or b_0x == b_1x or b_0y == b_1y:
+        return False
+    # boxes do not overlap horizontally
+    if a_1x <= b_0x or b_1x <= a_0x:
+        return False
+    # boxes do not overlap vertically
+    if a_1y <= b_0y or b_1y <= a_0y:
+        return False
+    # boxes overlap
+    return True
+
 def score_iou(a, b):
     """
-    Intersection over union = Area(AnB) / Area(AuB)
+    Calculate the intersection over union (IOU) metric 
+    of two rectangles a and b.
+
+    notation:
+    	(0x,0y): (x,y) of top-left corner of rectangle
+    	(1x,1y): (x,y) of bottom-right corner of rectangle
+    	W: width of rectangle
+    	H: height of rectangle
+    	A: area of rectangle
+    	i: intersection of two rectangles 
+    	u: union of two rectangles
+    args:
+    	Two rectangles a, b of form [0x,0y,W,H] where:
+    		(0x,0y) represent coordinates of top-left corner
+    		W and H represent width and height respectively
+    returns:
+    	IOU = A_i / A_u
     """
-    # inner box
-    inner_x0 = max(a[0], a[0])
-    inner_y0 = max(a[1], b[1])
-    inner_x1 = min(a[0] + a[2], b[0] + b[2])
-    inner_y1 = min(a[1] + a[3], b[1] + b[3])
-    # box areas
-    a_area = (a[0] + a[2] - a[0] + 1) * (b[1] + b[3] - b[1] + 1)
-    b_area = (a[0] + a[2] - b[0] + 1) * (b[1] + b[3] - b[1] + 1)
-    inner_area = max(0, inner_x1 - inner_x0 + 1) * max(0, inner_y1 - inner_y0 + 1)
-	# intersection over union
-    iou = inner_area / (a_area + b_area - inner_area)
+    # get a_0, b_0 (x,y), width (W) and height (H) 
+    a_0x, a_0y, W_a, H_a = a
+    b_0x, b_0y, W_b, H_b = b
+    # get a_1 (x,y)
+    a_1x = a_0x + W_a
+    a_1y = a_0y + H_a
+    # get b_1 (x,y)
+    b_1x = b_0x + W_b
+    b_1y = b_0y + H_b
+    # if no overlap return IOU = 0
+    if not overlaps(a_0x, a_0y, a_1x, a_1y, b_0x, b_0y, b_1x, b_1y):
+        return 0
+    # get i0 (x,y)
+    i_x0 = max(a_0x, b_0x)
+    i_y0 = max(a_0y, b_0y)
+    # get i1 (x,y)
+    i_x1 = min(a_1x, b_1x)
+    i_y1 = min(a_1y, b_1y)
+    # get i width and height
+    W_i = abs(i_x1 - i_x0)
+    H_i = abs(i_y1 - i_y0)
+    # get a, b and i area (A)
+    A_a = W_a * H_a
+    A_b = W_b * H_b
+    A_i = W_i * H_i
+    # get area of union
+    A_u = A_a + A_b - A_i
+    # calculate intersection over union
+    iou = A_i / A_u
     return iou
 
-def avg_iou(ious):
-    if len(ious) == 0:
-        return 0
-    return np.asarray(ious).mean()
-
-# def avg_iou(true_boxes, pred_boxes):
-#     total = 0
-#     for true_box in true_boxes:
-#         max = 0
-#         for pred_box in pred_boxes:
-#             iou = score_iou(true_box, pred_box)
-#             if (iou > max):
-#                 max = iou
-#         if max > 0:
-#             total += max
-#     if len(true_boxes) == 0:
-#         return 0
-#     return total / len(true_boxes)
+def avg_iou(ious, n_groundtruths):
+    """
+    Return average IOU for image.
+    """
+    if n_groundtruths == 0:
+        return -1, -1 # if no ground truths return null marker (-1)
+    avg_iou = np.asarray(ious).sum() / n_groundtruths
+    if not ious:
+        avg_detect_iou = 0.0
+    else:
+        avg_detect_iou = np.asarray(ious).mean()
+    return avg_iou, avg_detect_iou
 
 def get_tpfpfn(true_boxes, pred_boxes):
     """

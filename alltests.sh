@@ -1,5 +1,6 @@
-printf "\n[INFO] Running all test images...\n"
+printf "\n[INFO] Running test images 0-15 (this may take a while)...\n"
 
+python -m darts clean
 python -m darts dart0.jpg
 python -m darts dart1.jpg
 python -m darts dart2.jpg
