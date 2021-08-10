@@ -89,9 +89,11 @@ Output results are located in CSV files in `darts/out/results`.
     - `segment.py`: performs KMeans color segmentation.
   - `__main__.py`: main script to run application.
   - `app.py`: application script for orchestration of processing.
-- `/report`: report PDF and TEX files with figures.
+- `/report`: LaTeX report and figures based on COLING2020 template.
+- `/submission`: contains submission .zip
 - `.gitignore`: Git ignore
 - `alltests.sh`: convenience script to process all test images.
+- `report.pdf`: final report PDF.
 - `README.md`: this README file.
 - `requirements.txt`: Python requirements to run Python module.
 - `setup.sh`: convenience script to setup Python environment with requirements.
