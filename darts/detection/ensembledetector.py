@@ -15,7 +15,7 @@ class EnsembleDetector():
             cb_y_min = cy - cr
             c_box = np.array([cb_x_min, cb_y_min, 2*cr, 2*cr])
             # if there are enough line intersections with hough circle assume dartboard
-            if (intersectcount(self.lines, c_box) > 4):
+            if (intersectcount(self.lines, c_box) > 6):
                 if checknotduplicate(c_box, self.boxes, min_dist):
                     if (self.boxes.size == 0):
                         self.boxes =  np.asarray([c_box])
@@ -43,7 +43,7 @@ class EnsembleDetector():
                         else:
                             self.boxes = np.vstack((self.boxes, e_box))
             # if there are enough line intersections with cascade box assume circle
-            if (intersectcount(self.lines, d_box) == 0):
+            if (intersectcount(self.lines, d_box) > 6):
                 if checknotduplicate(d_box, self.boxes, min_dist):
                     if (self.boxes.size == 0):
                         self.boxes = np.asarray([d_box])

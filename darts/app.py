@@ -31,19 +31,19 @@ def run():
 
     # parameters for detection #
     gaussian_size = 3 # size of gaussian kernel
-    sobel_t_val = 130 # threshold value for sobel edge detection
-    houghlines_t_val = 30 # threshold value for hough lines
+    sobel_t_val = 100 # threshold value for sobel edge detection
+    houghlines_t_val = 20 # threshold value for hough lines
     houghcircles_t_val = 30 # threshold value for hough circles
 
-    houghcircles_min_r = 10 # minimum hough circle radius
-    houghcircles_max_r = 200 # maximum hough circle radius
+    houghcircles_min_r = 20 # minimum hough circle radius
+    houghcircles_max_r = 150 # maximum hough circle radius
     houghcircles_r_step = 5 # skip r radii when drawing circles in hough space
 
     lines_mindist = 20 
     circles_mindist = 100 # minimum distance between circle detections
     ensemble_mindist = 100 # minimum distance between dartboard detections in ensemble method
 
-    all_spaces = False # draw all hough spaces or only sum
+    all_spaces = True # draw all hough spaces or only sum
     kmeans = False # apply kmeans clustering
     k = 2 # number of kmeans clusters
 
@@ -56,6 +56,9 @@ def run():
 
     # load frame from arguments    
     frame_original, name = readfromargs(sys.argv)
+    base_name = name
+    if kmeans:
+        name = name + "_kmeans"
     frame = frame_original.copy()
     print(f"[1/{preprocessing_steps}]: Loading frame '{name}'...")
 
@@ -144,14 +147,14 @@ def run():
 
     # faces
     print("\n[1/3]: Viola Jones face detection analysis")
-    true_faces = gettruefaces(name)
+    true_faces = gettruefaces(base_name)
     draw.true_face_boxes(frame_original, true_faces, name)
     draw.true_pred_face_boxes(frame_original, true_faces, vj_face_boxes, name)
     vj_faces_results = evaluateresults(true_faces, vj_face_boxes)#, name, "vj_faces")
 
     # darts
     print("\n[2/3]: Viola Jones dartboard detection analysis")
-    true_darts = gettruedartboards(name)
+    true_darts = gettruedartboards(base_name)
     draw.true_dart_boxes(frame_original, true_darts, name)
     draw.true_pred_dart_boxes(frame_original, true_darts, vj_dartboard_boxes, name)
     vj_darts_results = evaluateresults(true_darts, vj_dartboard_boxes)#, name, "vj_darts")
@@ -167,6 +170,6 @@ def run():
         (vj_darts_results, "vj_darts_results"),
         (ensemble_results, "ensemble")
     ]
-    write.evaluation_results(results, name)
+    write.evaluation_results(results, name, kmeans)
 
     print("Done.\n\nComplete!")

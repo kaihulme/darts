@@ -134,13 +134,15 @@ def contour(frame, name):
     """
     write(frame, name + "_countour")
 
-def evaluation_results(results, name):
+def evaluation_results(results, name, kmeans):
     """
     Update evaluation results to CSV file
     """
     csv_dir = os.path.join(os.getcwd(), "darts/out/results")
     for (result, test) in results:
         csv_path = os.path.join(csv_dir, "{}_results.csv".format(test))
+        if kmeans and test == "ensemble":
+            csv_path = os.path.join(csv_dir, "kmeans_ensemble_results.csv")
         if os.path.exists(csv_path):
             results_df = pd.read_csv(csv_path).set_index("image")
         else: # create new dataframe if one doesn't exist
@@ -159,7 +161,10 @@ def evaluation_results(results, name):
         
         # update average metrics
         avgs = ["precision", "recall", "f1_score"]
-        results_df.loc["total"][avgs] = results_df.drop("total", axis=0, inplace=False)[avgs].mean()
+
+        results_df.loc["total"][avgs] = results_df.drop("total", axis=0, inplace=False)[avgs][results_df[avgs]>=0].mean()
+        # results_df.loc["total"][avgs] = results_df.drop("total", axis=0, inplace=False)[avgs].mean()
+
         results_df.loc["total"]["avg_detect_iou"] = results_df["avg_detect_iou"].drop("total", axis=0, inplace=False)[results_df["avg_detect_iou"]>0].mean()
         results_df.loc["total"]["avg_iou"] = results_df["avg_iou"].drop("total", axis=0, inplace=False)[results_df["avg_iou"]>=0].mean()
         
